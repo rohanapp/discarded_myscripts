@@ -1,0 +1,18 @@
+CodeType: Class
+
+class NgAppProgramOptions : none {
+
+public:
+
+ClassMethods {
+Constructor() {}
+Destructor() {}
+}
+
+private:
+
+ClassMembers {
+namedprops m_optionProps {na}
+}
+
+}

@@ -1,0 +1,36 @@
+CodeType: Class
+
+
+class NgAppAnsoftCommandMessage: none {
+ 
+public:
+
+ClassMethods {
+
+Constructor(){}
+Destructor(){}
+
+void AddErrorMessage(const str& msg) {}
+void AddWarningMessage(const str& msg) {}
+void AddinfoMessage(const str& msg) {}
+
+size_t GetErrorMessages(strvec& msgs) const {namedpropsutil}
+size_t GetWarningMessages(strvec& msgs) const  {namedpropsutil}
+size_t GetInfoMessages(strvec& msgs) const {namedpropsutil}
+
+// Simply get forwarded to the named properties object contained
+readerror DoDataExchange(block& block, bool do_read) {m_cmdMessages}
+str GetItemName() const {m_cmdMessages}
+
+}
+
+private:
+
+ClassMethods {
+}
+
+ClassMembers {
+namedprops m_cmdMessages;
+}
+
+}

@@ -1,0 +1,151 @@
+bool NgAnsoftCOMApplication:: InitializeApplication(int argc, char** argv) 
+{
+  // Initialization of ngcore
+  InitNgcoreDLL(this);
+  //InitUicoreDLL(this);
+
+  m_cmdInfo.GenerateRegistryOverrideFileIfNecessary(RegistryAccess::GetTempDir());
+
+}
+
+EnvironmentVariablesContext::EnvironmentVariablesContext(const AString& envName, const AString& envVal)
+{
+  SS_ASSERT(envName.size());
+    SS_ASSERT(envVal.size());
+
+    static const AChar* envVar = i18n::ACharGetEnv(envName);
+  // NOTE: each env requires it's own buffer! Don't reuse the same buffer for 2 diff envs
+  const int kMaxEnvStrBuffer = 512;
+  static char envstring[kMaxEnvStrBuffer] = {0}
+  AString env_str = ACHAR("ENV_NAME=");
+  env_str += env_value;
+  strcpy(envstring, env_str.ASCII().Str());
+  ANSOFT_PUTENV(envstring);
+  std::map<AString,AString> container;
+  // Iteration
+  std::map<AString, vtype>::iterator it;
+  for(it = container.begin(); it != contained.end(); ++it)
+  const ktype& keyOfElem = it->first;
+  const ktype& valOfElem = it->second;
+  
+  // Find
+  std::map<AString, vtype>::iterator it = container.find(elem);
+  SS_ASSERT(it != container.end());
+  valFound = it->second;
+  
+  // Erase
+  container.erase(it);
+  
+  // Insert element
+  container[kval] = eval;
+  container.insert(std::pair<AString,etype>(kval,eval));
+  
+  // Clear all contents
+  container.clear();
+}
+
+
+ EnvironmentVariablesContext::EnvironmentVariablesContext() 
+{
+  // NOTE: each env requires it's own buffer! Don't reuse the same buffer for 2 diff envs
+  const int kMaxEnvStrBuffer = 512;
+  static char envstring[kMaxEnvStrBuffer] = {0}
+  AString env_str = ACHAR("ENV_NAME=");
+  env_str += env_value;
+  strcpy(envstring, env_str.ASCII().Str());
+  ANSOFT_PUTENV(envstring);
+  std::map<AString,AString> container;
+  // Iteration
+  std::map<AString, vtype>::iterator it;
+  for(it = container.begin(); it != contained.end(); ++it)
+  const ktype& keyOfElem = it->first;
+  const ktype& valOfElem = it->second;
+  
+  // Find
+  std::map<AString, vtype>::iterator it = container.find(elem);
+  SS_ASSERT(it != container.end());
+  valFound = it->second;
+  
+  // Erase
+  container.erase(it);
+  
+  // Insert element
+  container[kval] = eval;
+  container.insert(std::pair<AString,etype>(kval,eval));
+  
+  // Clear all contents
+  container.clear();
+}
+#include "EnvironmentVariablesContext.h"
+#include "ngcore/ngutils/ans_debug.h"
+#include "ngcore/stringutils/astring.h"
+#include "algorithm"
+
+
+EnvironmentVariablesContext::EnvironmentVariablesContext(const std::map<AString,AString>& envVals) 
+{
+  SS_ASSERT(envVals.empty()==false)
+  static const AChar* envVar = i18n::ACharGetEnv(ACHAR("YOUR_ENV"))
+  // NOTE: each env requires it's own buffer! Don't reuse the same buffer for 2 diff envs
+  const int kMaxEnvStrBuffer = 512
+  static char envstring[kMaxEnvStrBuffer] = {0}
+  AString env_str = ACHAR("ENV_NAME=")
+  env_str += env_value
+  strcpy(envstring, env_str.ASCII().Str())
+  ANSOFT_PUTENV(envstring)
+  std::map<AString,AString> container
+  // Iteration
+  std::map<AString, vtype>::iterator it
+  for(it = container.begin(); it != contained.end(); ++it)
+  const ktype& keyOfElem = it->first
+  const ktype& valOfElem = it->second
+  
+  // Find
+  std::map<AString, vtype>::iterator it = container.find(elem)
+  SS_ASSERT(it != container.end())
+  valFound = it->second
+  
+  // Erase
+  container.erase(it)
+  
+  // Insert element
+  container[kval] = eval
+  container.insert(std::pair<AString,etype>(kval,eval))
+  
+  // Clear all contents
+  container.clear()
+}
+
+
+ EnvironmentVariablesContext::EnvironmentVariablesContext() 
+{
+  // NOTE: each env requires it's own buffer! Don't reuse the same buffer for 2 diff envs
+  const int kMaxEnvStrBuffer = 512
+  static char envstring[kMaxEnvStrBuffer] = {0}
+  AString env_str = ACHAR("ENV_NAME=")
+  env_str += env_value
+  strcpy(envstring, env_str.ASCII().Str())
+  ANSOFT_PUTENV(envstring)
+  std::map<AString,AString> container
+  // Iteration
+  std::map<AString, vtype>::iterator it
+  for(it = container.begin(); it != contained.end(); ++it)
+  const ktype& keyOfElem = it->first
+  const ktype& valOfElem = it->second
+  
+  // Find
+  std::map<AString, vtype>::iterator it = container.find(elem)
+  SS_ASSERT(it != container.end())
+  valFound = it->second
+  
+  // Erase
+  container.erase(it)
+  
+  // Insert element
+  container[kval] = eval
+  container.insert(std::pair<AString,etype>(kval,eval))
+  
+  // Clear all contents
+  container.clear()
+}
+

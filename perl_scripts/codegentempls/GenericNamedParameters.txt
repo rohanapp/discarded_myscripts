@@ -1,0 +1,98 @@
+CodeType: Class
+
+// 
+// Purpose:
+//
+// This class encapsulates named values. Names must be unique.
+// Values are either: string, number, vector of strings, block
+// Provides persistance to block. Ordering of parameters in the block is not defined
+//
+// Usage: 
+//        An object of this class is a uniform way to represent objects that have properties, optionally some ID.
+//        Whene an object of this class is created, owner should initialize the property definition and 
+//        also populate the object with default values for all properties using InitializeObjectPropertiesSchema method
+//        When object is saved, schema will also be saved. So there is no need
+//        to update the schema between sessions. When major version is changed, translation might become necessary.
+//        Use this class to write generic algorithms that can build on top of such generic parameters.
+//        The schema is defined by the current version of program if that is different from the database contents.
+//
+class GenericNamedPropertiesObject: io_obj {
+ 
+public:
+
+ClassMethods {
+
+// "itemName" is the name of the block containing this data. A valid value must be passed
+// "paramsDef": these are the names and data-types allowed
+Constructor(const str& itemName, id objID, int owningModuleVersionNum){assert}
+Destructor(){}
+
+id GetNamedPropObjectID() const {assert}
+
+bool GetPropertyValue(val& param, const str& name) const {}
+// Note: below provide an efficient way to update vector-of-string properties efficiently
+// rather than requiring a full replacement
+val* GetPropertyValueForEdit(const str& name) {}
+const val* GetPropertyValue(const str& name) const {}
+// Blocks are returned as packed strings. 
+// Strings in string-vectors are joined into one string using comma separators
+// bool GetPropertyValueAsString(AString& param, const str& name) const {}
+
+
+// Set a named value
+// Returns an error if the name sent in is not a property of this object
+bool SetPropertyValue(const str& name, const val& paramVal) {assert}
+
+// Specify the properties of the object. 
+// Enable object's introspection through below
+// The state of these properties can be changed using other methods.
+// Returns false if the property is already registered
+bool InitializePropertySpec(const str& name, const val& val) {assert}
+bool InitializePropertySpec(const str& name, const std::vector<AString>& vecStr) {assert}
+bool InitializePropertySpec(const str& name, const io::CBlock& blk) {assert}
+
+// REVISIT: Will be implemented in the future as needed
+// bool UnRegisterPropertySpecification(const str& name, PropertyType ptype) {assert}
+
+// Overides for streamio_block_object
+// REVISIT: enable automatic additon of overrides to headers through code generation
+// Assert that the block's name is same as the item name of this object
+virtual readerror DoDataExchange(block& block, bool do_read) {objdataexchange}
+virtual str GetItemName() const {}
+}
+
+private:
+
+// FUTURE TODO:
+// In the future, associate version of program that generated this object. Backward compatibile
+// IO can be supported this way: a new version program will be enabled to read legacy versions
+// Provide constructor(version_number_of_program, IObjectOwner* owner)
+// During read "owner->TranslateLegacyData(newData, oldData)" will be invoked to translate
+// legacy data to current version
+
+ClassMethods {
+readerror DoDataExchangeStringVecProps(io::CBlock& block, bool do_read) {na}
+readerror DoDataExchangeCBlockProps(io::CBlock& block, bool do_read) {na}
+}
+
+ClassMembers {
+
+//
+// Datastructure for values
+// Key is property name. Value is the value of property
+//
+// Storage for string/number properties
+strvalmap m_valProperties {na}
+// Storage for string vectors
+stlm m_stringVecTypeProperties {na}
+// Storage for blocks
+stlm m_blockTypeProperties {na}
+
+str m_itemName {na}
+id m_objID {na}
+
+int m_ownerVersion {na}
+
+}
+
+}

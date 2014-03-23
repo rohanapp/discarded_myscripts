@@ -1,0 +1,46 @@
+CodeType: Class
+
+// 
+// Background:
+// In Desktop framework, a design is a 'definition'. User edits design through one of it's 
+// design-instances. Analogy: A component from a library manifests
+// in the form of component-instance of a 'design'. Similarly, a design
+// manifests in project in the form of a design-instance.
+//
+// 'design-instance' is one of the key enablers of hierarchy in Desktop.
+// The parent/child relationship between design-instances captures
+// hierarchy
+// 
+// Purpose: 
+// - Represents instance of a design. Appears in the project at top-level or lower
+//   level depending on whether it is a top-level design-instance or a child of another
+//   design-instance
+// - Captures hierarchy: Has one (or 0) parent design-instances and numerous children design-instances
+// 
+class DesktopDesignInstance : none {
+ 
+public:
+
+ClassMethods {
+Constructor(){}
+Destructor(){}
+
+void GetChildDesignInstances(listmodelinsts& children) {}
+modelinst* GetParentDesignInstance() {}
+// Return definition corresponding to this instance
+model* GetDefinition() {}
+
+
+// Below methods are invoked by design-manager as hierarchy evolves
+void AddChildDesignInstance(modelinst* child, compinst* correspondingCompInst) {}
+}
+
+private:
+
+ClassMembers {
+model* m_myDefinition;
+modelinst* m_myParent;
+listmodelinsts m_myChildren;
+}
+
+}

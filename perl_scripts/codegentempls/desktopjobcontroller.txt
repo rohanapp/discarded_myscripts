@@ -1,0 +1,22 @@
+CodeType: Class
+
+// Purpose: Coordinate between all the modules
+class DesktopJobController : none {
+
+public:
+
+ClassMethods {
+
+Constructor(djob* jobController){assert}
+
+bool PerformDSOAnalysis() {debuglogcontext,fileexists,addmsg}
+
+}
+
+private:
+
+ClassMembers {
+djob* m_desktopJobController {get}
+}
+
+}

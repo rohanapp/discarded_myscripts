@@ -1,0 +1,19 @@
+CodeType: Class
+ExtraIncludeInHeaders: none
+ExtraIncludeInCpp: none
+
+class INgAppMessageTargetOwner : none {
+
+public:
+
+ClassMethods {
+Constructor() {}
+Destructor() {}
+}
+
+private:
+
+ClassMembers {
+}
+
+}

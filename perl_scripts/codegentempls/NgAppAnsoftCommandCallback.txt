@@ -1,0 +1,28 @@
+CodeType: Class
+
+// YYY: should this be an interface. How does it tie back to command? Should below methods be virtuals?
+// Callback encapsulates cmd identity. So messages are just data without any reference to associated command
+class NgAppCommandCallback: none {
+ 
+public:
+
+ClassMethods {
+
+// Default handler pushes all below messages to message manager and message handler will take 
+// action (handling might flush the messages to log file or send over the tcp/ip connection)
+// Set isAborted to 'true' to abort command. It is set to false before invoking below methods
+virtual void OnNgAppCommandMessage(bool& isAborted, const ngcmdmsg& msg) {}
+virtual void OnNgAppCommandProgress(bool& isAborted, const ngcmdprogress& prog) {}
+virtual void OnNgAppCommandCompletion(const ngcmdstatus& status) {}
+
+}
+
+private:
+
+ClassMethods {
+}
+
+ClassMembers {
+}
+
+}

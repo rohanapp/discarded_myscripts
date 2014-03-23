@@ -1,0 +1,18 @@
+ClassMembers {
+static str kMonitorOptionName {na}
+static str kLogFileOptionName {na}
+static str kBatchOptionsOptionName {na}
+static str kEnvOptionName {na}
+static str kProductNameOptionName {na}
+static str kProductVersionOptionName {na}
+static str kDistributedOptionName {na}
+static str kNgOptionName {na}
+static str kWaitForLicenseOptionName {na}
+static str kMPOptionName {na}
+static str kJobCoresOptionName {na}
+static str kBatchSolveOptionName {na}
+static str kAbortOptionName {na}
+static str kProjectOptionName {na}
+static str kWaitForLicenseOptionName {na}
+static str kJobCoresOptionName {na}
+}

@@ -1,0 +1,21 @@
+CodeType: Class
+
+class NgAppCommandDef: io_obj {
+ 
+public:
+
+ClassMethods {
+Constructor(){assert}
+Destructor(){}
+
+virtual readerror DoDataExchange(block& block, bool do_read) {objdataexchange}
+virtual str GetItemName() const {}
+}
+
+private:
+
+ClassMembers {
+nprms m_cdefProps;
+}
+
+}

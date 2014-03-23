@@ -1,0 +1,34 @@
+CodeType: Class
+
+//
+// Purpose
+//
+// - Facilitates easy communication across the machines. It does this through the proxies and stubs it manages
+// - Services register with the communication manager using a unique name. Clients invoke services using the same name
+// Supports standard  interface to single-threaded applications that are based on ngapp framework:
+// DeliverServiceRequest(callback for ServiceProgressMessage, ServiceCompletion)
+// Makes standard requests to the service: HandleServiceRequest(callback for service progressmessage, service completion)
+// CreateCommandObject given named-parameters. Will issue unique IDs to commands.
+// Will take the command and address and dispatch the cmd and bring back the results. All in the
+// same thread. The service offered: remote execution. The challenges tackled: typically IPC challenges
+// such as: reliable startup/shutdown, distributed communication, messages/progress.
+//
+class NgAppDistributedCommMgr : none {
+
+public:
+ClassMethods {
+constructor(ngapp* owner) {assert}
+destructor() {}
+
+// Initialize stubs
+bool InitializeCommunicationObjects() {debuglogcontext}
+
+private:
+
+ClassMembers {
+ngapp* m_ownerApp;
+// Used to assign IDs to commands including distributed ones
+AnsoftIDServer idServer {na}
+}
+
+}

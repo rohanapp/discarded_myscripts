@@ -1,0 +1,38 @@
+CodeType: Class
+
+// 
+// Purpose: 
+// - Represents instance of a hierarchical component
+//   
+// Usage:
+// - A design is composed of ComponentInstances, besides other things
+// 
+// State (i.e. members):
+// - Reference to 'ComponentDefinition' corresponding to this instance
+// - ParameterList: overridden values of component's public parameters
+// 
+class ComponentInstance : none {
+ 
+public:
+
+ClassMethods {
+Constructor(const compdef* instanceDef){}
+Destructor(){}
+
+// Get parameters corresponding to this instance
+const compparams& GetInstanceParameters() const {}
+// Get interface to definition of this instance
+const compdef* GetIComponentDefinition() const {}
+
+}
+
+private:
+
+ClassMembers {
+// overridden parameter values. Number of overridden values can be from 0 or all parameters
+compparams m_compParameters;
+// Reference definition
+const compdef* m_compDefn;
+}
+
+}

@@ -1,0 +1,19 @@
+CodeType: Class
+
+//
+// Purpose
+//
+// Manages runtime enviroment of application. Handles messages. Communication with service
+// Callback to the client. Management of events and waking up threads. Synchronizing access
+// to the data. Management of threads: all threads started under the purview of runtime manager
+// What is the benefit????
+// How about a command manager? What would be it's benefit? 
+// It can provide an interface such as
+// CreateCommandObject given named-parameters. Will issue unique IDs to commands.
+// Will take the command and address and dispatch the cmd and bring back the results. All in the
+// same thread. The service offered: remote execution. The challenges tackled: typically IPC challenges
+// such as: reliable startup/shutdown, distributed communication, messages/progress.
+// Support a standard  interface to the client: 
+// DeliverServiceRequest, OnServiceProgressMessage, 
+// OnServiceCompletion
+// Supports a standard interface to the service: 

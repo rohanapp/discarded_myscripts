@@ -1,0 +1,36 @@
+CodeType: Class
+
+// 
+// Purpose: 
+// - Interface that is implemented by desktops are
+//   merged into integrated desktop.
+// - Provides implementation for functionality that's
+//   considered 'product specific' rather than
+//   being same for all products in the desktop
+//
+class IDesktopApplication : none {
+ 
+public:
+
+ClassMethods {
+virtual str GetHelpFile() const = 0 {}
+virtual bool ProductSupportsContextHelp() const = 0 {}
+
+virtual bool DoAutomaticDesignCleanup() const = 0 {}
+
+virtual void ExtendMainMenu(menu& menu, cmdtargetvec& vecCmdTargets) = 0 {}
+
+virtual void GetCustomBatchCommands(strintmap& cmds) const = 0 {}
+virtual bool DoCustomBatchCommand(str& command, strvec& args) = 0 {}
+
+virtual bool GetShowSaveAsTechnologyFileMenuItem() const = 0 {}
+
+virtual void* GetInterface(iid nID) = 0 {}
+}
+
+private:
+
+ClassMembers {
+}
+
+}

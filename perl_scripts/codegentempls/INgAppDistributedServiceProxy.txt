@@ -1,0 +1,14 @@
+CodeType: Class
+
+class INgAppDistributedServiceProxy: none {
+ 
+public:
+
+ClassMethods {
+// After calling below method, the pointer to this object is no longer valid.
+// So below must be the last call to be made to this interface
+virtual void OnDoneUsingService() = 0;
+virtual int DistributeNgAppCommandToAllNodes() = 0;
+}
+
+}

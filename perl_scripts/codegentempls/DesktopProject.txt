@@ -1,0 +1,24 @@
+CodeType: Class
+
+// 
+// Purpose: 
+// - Desktop application owns Desktop project
+// - Creates 'design manager' to manage designs and hierarchical
+//   reuse of them
+// - (See DesktopDesignManager for more info)
+class DesktopProject : none {
+ 
+public:
+
+ClassMethods {
+Constructor(){}
+Destructor(){}
+}
+
+private:
+
+ClassMembers {
+modelsmgr m_designManager;
+}
+
+}

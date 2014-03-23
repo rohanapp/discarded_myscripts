@@ -1,0 +1,44 @@
+CodeType: Class
+ExtraIncludeInHeaders: block
+//ExtraIncludeInCpp: none
+
+//
+// !!PURPOSE!!
+// 
+// Denotes the full extracted results for a design
+// Fow now, just has 0D, 1D results. Scope of 1D results: all outputs for all
+// variations are at the same set of primary sweep values
+class DesktopDesignExtractedResultsObject: blockobj {
+
+public:
+
+ClassMethods {
+Constructor() {}
+Destructor() {}
+
+// Keep columns as external files referenced by a header file.
+// External column files are always referenced relative to job's root folder
+readerror WriteExtractedResultsObject(const lfn& fpath){debuglogcontext,tempfile,writefile}
+readerror ReadExtractedResultsObject(const lfn& fpath){debuglogcontext,readfile}
+// Read multiple files, one per child and merge them in to single file
+readerror ReadImmediateChildResultsAndMerge(const strvec& filePaths){stlviter}
+// Write file in the job root folder with name "projname_jobid.csv"
+readerror GenerateCSVFilesOfOneDResults(const str& csvFileName) const{debuglogcontext,writefile}
+
+void InitializeOneDSimResults(const str& sweepName, const col& sweepVals) {debuglogcontext,assert}
+// At this time, all 1D results should have the same primary sweep values. So last parameter should be NULL
+void AddOneDResult(id majorvvID, const str& qtyName, const col& qtyVals, const col* sweepVals) {debuglogcontext,assert}
+
+const OneDimensionSimulationResults& GetOneDResults() const{}
+}
+
+private:
+
+ClassMethods {
+readerror DoDataExchangeResultsObject(block& block, bool do_read){dataexchange}
+}
+ClassMembers {
+OneDimensionSimulationResults m_results1D;
+}
+
+}

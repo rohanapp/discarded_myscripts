@@ -1,0 +1,26 @@
+CodeType: Class
+ExtraIncludeInHeaders: strvec
+ExtraIncludeInCpp: 
+
+class LargeScaleDSOCommandProvider : ingappcmdprovider {
+
+public:
+
+ClassMethods {
+// Returns dso. User starts desktopjob with commandline -cmd dso
+virtual void GetSupportedNgCommands(strvec& cmdUniqueNames) const {debuglogcontext}
+
+virtual bool ParseCommandLineOptions(io::CBlock& cmdParams, IGeneralOptionSetter* setGenOptions, const AString& cmdName, int argc, char** argv, const NgAppProgramOptions& generalOptions) {}
+
+virtual bool PrepareCommandExecutionEnv(const str& cmdName, const block& cmdParams, const ngappcmdline& generalOptions) {ansdebug,debuglogcontext,addmsg,assert,rett}
+
+virtual bool RunNgCommand(ingcmdcallback* icmdCB) {ansdebug,debuglogcontext,addmsg,assert,rett}
+}
+
+private:
+
+ClassMembers {
+ngappdsoprms m_dsoParams;
+}
+
+}

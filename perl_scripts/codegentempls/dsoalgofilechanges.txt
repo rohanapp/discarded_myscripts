@@ -1,0 +1,4 @@
+
+- Initial files missed
+c:\cviews\nappann_core5_view\nextgen\ansoftcore\lib\NgAnsoftCOMApp\GenericNamedPropertiesObject.cpp
+c:\cviews\nappann_core5_view\nextgen\ansoftcore\lib\NgAnsoftCOMApp\GenericNamedPropertiesObject.h

@@ -1,0 +1,96 @@
+%TOC%
+
+<noautolink>
+
+---++++ The Code Change Proposal
+
+---+++++ Code Change Proposal
+
+---++++++ Goal
+Provide a easy way to validate a job's run. Enable writing basic regression tests
+
+---++++++ Test Cases
+
+---++++++ Description of UI Changes
+   1 When job is kicked off, the standout output to the terminal should be limited to: Job with ID 'number' is created. Use this ID to interface with the running job
+   1 Output a desktopjob_summary.log file in the root working directory. Write the same to standard output when job is done:
+      * Job status: Completed with errors, Completed with warnings, Completed successfully
+      * Job start time, end time
+      * Number of machines/cores given to job. Number of machines/cores actually used by job. Number of machines/cores inaccessible to job. Order in which machines completed their portion, including start/end time. Per machine info -&gt; Local storage directory data (directory path, space at the beginning of solve, space at the end of solve), Memory (begin, peak, end)
+      * DSO command (i.e. command specific info): 
+         * Per machine, number of variations solved. Number of unsolved or failed variations. Variations solved per machine. Fastest variation solve time, machine. Slowest variation solve time, machine. Average variation solve time. Overall speedup. Per machine speedup
+         * Table calculations
+         * Note: Speedup numbers ignore unavailable machines
+   1 Support following command lines to interface with the 'active' job 
+      * desktopjob -jobid &lt;jobid&gt; -progress [verbose|concise|default|realtime] -engine &lt;enginenum&gt; &lt;input-project&gt;
+         * Concise: Number of running engines: #, Number of solved variations: #, Total time taken so far: time, Average solve time per variation: time
+         * Default: dump batch.log for the given engine number
+      * desktopjob -jobid &lt;jobid&gt; interrupt or abort
+      * desktopjob -jobid &lt;jobid&gt; -run &lt;program-path&gt; &lt;comma-separated-parameters&gt;
+   1 Support following command lines to interface with the 'passive' job i.e. just database
+      * desktopjob -jobid &lt;jobid&gt; -info [default|verbose] &lt;input-project&gt;
+         * Default: Job's overall resources: machine-list/num-cores; Number of engines: #; Total number of variations to solve: #
+         * Verbose: 
+            * Additionally includes per engine info: Engine: #; Host machine: machine; Num variations to solve: #; Variation indices to solve: [#, #]; 
+            * Additionally includes detailed resource info: Total RAM, Total num cores, etc. 
+      * desktopjob -jobid &lt;jobid&gt; -status [verbose|concise|default] &lt;input-project&gt;
+
+
+---++++++ UI Considerations
+
+
+---++++++ Software design
+Use case:
+   * User runs command 'desktopjob -jobid # -prog extractresults.exe -options 'projname,designname' project-path
+   * desktopjob connects to the desktopjob running command, using the 'desktopjob.connprms' in the root working directory of running job. Obtains INgAppCommandCallback interface
+   * Create NgAppProgramParameters using: progexe, comma-separated string denoting prog commandline. 
+   * Invoke blocking call: INgAppCommandCallback::RunCommandProgram(params, NgAppProgramResults). NgAppProgramResults are dumped to stdout
+
+---++++++ Description of Code Changes
+   1 App: during runcommand, write commandef to commandef.txt file, progoptions to progoptions.txt file
+   1 During 
+   1 Add classes to wbintegutils: 
+      * ParametricDSOAnalysisTaskDefinition
+      * IParametricDSOTaskInfoConsumer
+      * Update Imakefile, vcproj
+   1 Provide a IParametricDSOTaskInfoConsumer to existing desktopproxylib::AnalyzeParametrics call. This function will send back ParametricDSOAnalysisTaskDefinition
+   1 LargeDSOCommandProvider: write ParametricDSOAnalysisTaskDefinition to dsocommanddef.txt file
+   1 Exception/Error handling:
+      * For active job interfacers: If the job id is invalid or connection params don't exist: Error occurred: Job 'id' has either completed or hasn't started. This option works only on a running job
+
+---++++++ Coding Considerations
+   * Handle messages from all threads
+
+
+---++++++ Inter-module Interface changes
+
+---++++++ Proposal check-list
+When code changes are fundamental or extensive, go through all <a href="/twiki/bin/view/SJCDev/AllCheckLists">check-lists</a> AND run any applicable regression tests.
+%EDITTABLE{ header="|*Label*|*Value*|"  format="|label,0,Notes | textarea, 5x80,|" changerows="add"}%
+|*Label*                        |*Value*|
+| CODE:Are software interface changes [[SJCDev.BackwardComptaibleSoftwareInterfacesChecklist][backward compatible]]? | |
+| CODE:If behavior of code has changed, are these changes appropriate for all high-level contexts? (check clients of edited code for [[SJCDev.HowToCheckForSideEffectsOfCodeChanges][undesirable side-effects]])? | |
+| CODE:Do algorithms scale linearly (cpu/memory) as a function of complexity? |  |
+| CODE:Does Test Cases section include tests for all boundary conditions and stress conditions? |  |
+| CODE:Clearcase: Is mastership obtained for all the files to be checked in? | |
+| CODE:Clearcase: Are all new elements added to source code control? | |
+| CODE:Is every new/edited line stepped through in the debugger? |  |
+| CODE:Is the code added free of, and not caused any compiler warnings? |  |
+
+---+++++ Bug prevention comments
+
+---+++++ Code Change Proposal Review Comments
+
+---+++++ Code Change Proposal File Changes
+
+%EDITTABLE{ header="|*Label*|*Value*|"  format="|label,0,Notes | textarea, 5x80,|" changerows="add"}%
+|*Label*                         |*Value*|
+|CODE:Branch            |  |
+|CODE:Newly created dependencies (i.e. vcproj/sln changes)|  |
+|CODE:Files             | |
+|CODE:Actual Time Taken | |
+
+</noautolink>
+
+
+-- Main.NareshAppannagaari - 29 Jul 2011

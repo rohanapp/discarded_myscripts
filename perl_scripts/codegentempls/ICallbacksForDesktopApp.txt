@@ -1,0 +1,22 @@
+CodeType: Class
+
+// 
+// Purpose: 
+// - Interface that is implemented by desktops are
+//   merged into integrated desktop.
+// - Provides implementation for functionality that's
+//   considered 'product specific' rather than
+//   being same for all products in the desktop
+//
+class ICallbacksForDesktopApp : none {
+ 
+public:
+
+ClassMethods {
+virtual idesk* GetIDesktop() = 0 {}
+virtual iproj* GetActiveIProject() const = 0 {}
+virtual bool IsProjectLocked(const lfn& projectFile) = 0 {}
+virtual void UnlockProject(const lfn& projectFileName) = 0 {}
+virtual msghandler* GetIMessageHandler() = 0 {}
+}
+}

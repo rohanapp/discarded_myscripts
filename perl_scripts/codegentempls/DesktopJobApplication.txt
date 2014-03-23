@@ -1,0 +1,36 @@
+CodeType: Class
+
+//
+class DesktopJobApplication: ngapp {
+ 
+public:
+
+ClassMethods {
+
+// Set "isStartedAsService" to true when the application is invoked through AnsoftCOM's CoCreateInstance to access
+// a particular service. 
+// It should be set to false when app is launched directory by user through a command-line interface
+// Difference between the two modes: when started as a client, a callback listener is started automatically
+// so it can intercept messages/results from the service request it made
+Constructor() {}
+Destructor(){}
+
+// Override below (optionally) to process derived app's command-line options
+virtual bool CustomPrepareNgAppUsingCommandline(const nprms& progOptions) {}
+virtual bool GetCommandLineOptionsSpec(OpDesc& genericOptions) const {addmsg,assert}
+
+// Client app needs to override below method. Return value from this function is used as the exit code of the client app
+// Note: This function will never be invoked for a exe that is started as a service
+virtual short ExecuteCommandLineCommand(const nprms& progOptions) {addmsg,assert}
+// Client app overrides below to accept message that came from it's service call
+// Default behavior: message-manager is populated and message handled
+virtual bool HandleMessageFromService(const ngappcmdmsg& msg) {debuglogcontext,addmsg,assert}
+
+}
+
+private:
+
+ClassMembers {
+}
+
+}

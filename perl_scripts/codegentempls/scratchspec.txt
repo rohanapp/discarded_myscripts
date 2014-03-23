@@ -1,0 +1,152 @@
+CodeType: Class
+
+class IDesktopJobSimulationManager: none {
+public:
+
+enum SimAction { kWaitForTaskSimAction, kStopWaitForTaskSimAction, kRunTaskSimAction, kInvalidSimAction };
+
+ClassMethods {
+virtual void InitializeDesktopJobSimulationManager(const largedsoprms& prms) = 0 {}
+
+// Notification regarding progress/status
+virtual void NotifyOnStartReadingOfInputFiles() = 0 {}
+virtual void NotifyOnEndReadingOfInputFiles() = 0 {}
+
+// The entire job is aborted when below is invoked. E.g. missing main solve license
+virtual void ForceAbortJob() = 0 {}
+
+virtual void NotifyOnSimulationStart(int numTargetTasks, int startTaskIndex, int endTaskIndex) = 0 {}
+// Analysis code invokes below before taking up a task
+virtual bool IsTaskHijackedByAnotherEngine(int taskIndex) const = 0{}
+virtual void NotifyOnTaskStart(int taskIndex) = 0{}
+virtual void NotifyOnTaskCompletion(int taskIndex, bool taskSucceeded) = 0{}
+virtual void NotifyOnAllTasksCompletion() = 0 {}
+// Analysis code invokes below prior to license checkin and exit
+virtual void WaitForExitEvent() = 0 {}
+
+virtual void NotifyOnStartExtractionOfResultFiles() = 0 {}
+virtual void NotifyOnEndExtractionOfResultFiles() = 0 {}
+}
+}
+
+CodeType: Class
+
+class DesktopJobSimulationManager: idjobsimmgr {
+public:
+
+ClassMethods {
+}
+
+private:
+enum DSOFolderType { kResultsFolderType, kStatusFolderType, kInvalidFolderType };
+
+ClassMethods {
+void CreateEmptyFileInLargeDSOFolder(DSOFolderType foldType, const str& fileName, const AChar* subDir) {}
+void DeleteFileInLargeDSOResultsFolder(DSOFolderType foldType, const str& fileName, const AChar* subDir) {}
+bool DoesFileExistInLargeDSOResultsFolder(DSOFolderType foldType, const str& fileName, const AChar* subDir) {}
+bool GetLargeDSOFileLfn(LongFileName& dsoFileLfn, DSOFolderType foldType, const str& fileName, const AChar* subDir) {}
+}
+ClassMembers {
+PrepareForLargeScaleDSOParams m_dsoPrms;
+DesktopJobSimulationProfile m_djobSimProfile;
+int m_currRunningTask;
+LongFileName m_jobOutputFolderLfn;
+LongFileName m_jobStatusFolderLfn;
+}
+}
+
+CodeType: Class
+
+class DesktopJobSimulationProfile : none {
+public:
+
+ClassMethods {
+Constructor(const taskdef& tdef){}
+Destructor(){}
+NotifyTaskStart(int taskIndex) {}
+NotifyTaskCompletion(int taskIndex, bool taskSucceeded) {}
+}
+
+private:
+ClassMembers {
+// Data that is a function of tasks: time taken to complete a task,
+// peak memory, peak disk, etc.
+onedres m_tasksData;
+// Average time to complete a task, Min, Max, etc.
+DesktopJobSimulationStatistics m_simStats;
+}
+}
+
+CodeType: Class
+ExtraIncludeInHeaders: token_ostream,stlv,block
+ExtraIncludeInCpp: ngcmd,ngapputils,onedres,onedquant,dcol,units,lfn,ipcutils,dataexchange
+
+class INgAppCommandProvider {
+typedef base::RefCounter_T<NgAppCommandActivationTopology> NgAppCommandActivationTopologyPtr;
+virtual NgAppCommandActivationTopologyPtr GetActivationTopologyToRunCommand() const{}
+};
+
+class DistributedMachineListFlat : none {
+
+public:
+
+ClassMethods {
+Constructor() {}
+Destructor() {}
+int GetNumMachines() const{}
+AString GetMachineName(int indexVal) const{}
+int GetUniqueMachinesInList(std::vector<AString>& uniqMachines) const;
+int GetUniqueMachinesAndCoresInList(std::vector< std::pair<AString, int> >& uniqMachineCores) const;
+}
+
+private:
+
+ClassMembers {
+}
+
+}
+
+// Abort command is executed as: desktopjob -abort jobid <projpath>
+// How does Abort command fit into existing data structures of ngapp framework:
+// Appriach: 
+// - Store desktopjob.status file that has the current status
+// - Store progoptions to a job-root-folder/prohoptions.txt file
+// - Store commanddefinition to a job-root-folder/commandefinition.txt file
+//
+// Program Options: Possible values for abort command are: hardcoded, running command, user specified
+// Monitor: same as running command
+// Logfile: same name as the running command
+// Batchoptions: same as the running command
+// Env vars: user specified
+// Work dir: same as running command
+// Job id: same as running command
+// Job name: same as running command
+// Prod name: same as running command
+// Prod version: same as running command
+// Distributed machines: same as running command
+// Ng: same as running command
+// WaitForLicense: same as running command
+// MP: same as running command
+// Idle cores: same
+// Preserve: same
+//
+//
+// Command definition:
+// Name: hardcoded to abort
+// Distribution level: same??
+// Sibling rank: same??
+// Sibling count:   same??
+// Total resource units (overall job): same??
+// Start resource unit: same??
+// End resource unit: same??
+// root task folder: same??
+// First sibling task folder: same??
+// Root work dir:
+// Local storage work dir:
+// Distributed machine list:
+//
+// Program Options:
+//
+//
+// Program Options:
+//

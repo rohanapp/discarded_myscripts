@@ -1,0 +1,47 @@
+CodeType: Class
+
+// 
+// Purpose: 
+// - Represents a hierarchical component from which light-weight instances (ComponentInstance) are created.
+// - Instances can override Componet's parameter values. Besides overrides, instances reuse the 
+//   rest (bulk) of component definition
+// 
+// State (i.e. members):
+// - ParameterList: component's public parameters with 'default values'. 
+// 
+class ComponentDefinition : none {
+ 
+public:
+
+ClassMethods {
+Constructor(){}
+Destructor(){}
+
+//
+// Creator of component uses below methods to setup component's 'public' interface
+// For e.g. when a design is inserted into project, a corresponding component
+// is created by 'design-manager'
+//
+
+void SetComponentName(const stdstr& name) {}
+// Expose/Remove 'public' parameters
+//      Note: The type of 'paramValue' can be a bool or int or double or string or file path or 
+//      array of any of these. Here 'paramValue' is chosen to be of 'double' type, just to 
+//      keep the sample code simple
+bool AddParameter(const stdstr& paramName, double paramValue) {}
+bool RemoveParameter(const stdstr& paramName) {}
+
+
+// Get parameters and default values
+const compparams& GetParameterDefaults() const {}
+
+}
+
+private:
+
+ClassMembers {
+// Essentially below is some map<name, value>
+compparams m_compParameters;
+}
+
+}

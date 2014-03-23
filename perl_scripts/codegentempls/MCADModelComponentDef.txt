@@ -1,0 +1,15 @@
+CodeType: Class
+
+// 
+// Background:
+// In a hierarchical MCAD system, there are components that are a proxy for
+// various objects in the system: MCAD model in the project, Parts from library, etc.
+// So some kind of component manager, per project, is needed to
+// manage available components.
+
+// Purpose: 
+// - Represents ComponentDefinition corresponding to an MCAD model
+
+class MCADModelComponentDef : ComponentDefinition<MCADModel*>, icompdef {
+
+}

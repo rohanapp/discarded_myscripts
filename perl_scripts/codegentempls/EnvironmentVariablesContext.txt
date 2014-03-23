@@ -1,0 +1,28 @@
+CodeType: Class
+
+// Use the below class to activate environment variables in a small context
+class EnvironmentVariablesContext : none {
+
+public:
+
+ClassMethods {
+// Set a map of env name and env values
+// Constructor updates env values. Destructor resets
+// NOTE: spaces in env names are not tested
+Constructor(const str& envName, const str& envVal) {debuglogcontext}
+// Restore env is done either as:
+// - putenv("envname=oldval") if env existed;oldval can be an empty string too
+// - putenv("envname") if env didn't exist earlier
+Destructor() {}
+
+}
+
+private:
+
+ClassMembers {
+bool m_isEnvSetOriginally
+str m_origEnvName
+str m_origEnvVal
+}
+
+}

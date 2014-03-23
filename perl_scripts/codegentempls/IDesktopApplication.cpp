@@ -1,0 +1,1 @@
+#include "CoreInterfaces/IDesktopApplication.h"

@@ -1,0 +1,156 @@
+CodeType: Class
+
+// Application object for ng applications. This object is hosted in a new NgAnsoftCOMApp dll.
+//
+// Purpose of NgAnsoftCOMApp: 
+// Provide a easy way to write remote services and for writing clients that leverage these services.
+// 'easy way': Derived client apps make simple function calls that are relayed over network to the service app. 
+// The messages/results from service app are relayed back to the client app. This is done without requiring 
+// client/server app to use AnsoftCOM or create aidl files or do any multi-threading
+//
+// Purpose of this class:
+// - Initialize/finalize AnsoftCOM
+// 
+// - Provides a per-thread message-manager
+// 
+// - Provide a message-handler that flushes messages to specified logfile
+// 
+// - Supports standard command-line parsing: -help -env "name=val", -debugmode "num:logfolder" -logfile file.
+//   Supports parsing of custom command-lines - custom parsing specified through Initialize method
+//
+// - Keeps around working dir of app when it started and app's location
+// 
+// - Provide reasonable default implementation for all IAnsoftApplication methods. Notable: tempdir, installdir, 
+//   versioned-product-exe-name (to enable usage of registryaccessng), exedir
+//   Provides additional methods such as machine-name as exactly specified in ansoftcom config file
+//
+// - Tempdir: can be overridden through batchoptions and the value used is as per file-based registry
+// 
+// - Uses: reads productlist.txt from the installation folder that has product name, version
+// 
+// - Usage: Ng applications create a class that derives from this class. In their 'main' function, they create
+//          concrete application object and invoke InitializeApplication method
+
+class NgAppAnsoftCOMApplication: acomapp {
+ 
+public:
+
+ClassMethods {
+// Returns exit code. Derived client or service app must call "return RunApplication", right at the beginning, 
+// from their main function
+static int RunNgApplication(int argc, char** argv, ingappcmdproviderfilter* appProvider) {initapp,,debuglogcontext,initacom,ansdebug,addmsg}
+
+// Returns false if option is not specified on the command line
+// template <class T>
+bool GetProgramOptionValue(T& val, const AString& optionName) const {}
+// Return the one specified on command line or use the project path
+AString GetLogFilePath() const {}
+
+// Override below (optionally) to process derived app's command-line options
+virtual bool CustomPrepareNgAppUsingCommandline(const nprms& progOptions) {}
+
+//
+// Client application
+//
+// To be overridden optionally by client apps. Provide the specification for custom command-lines
+virtual bool GetCommandLineOptionsSpec(po::options_description& generalOptions, po::options_description& hiddenOpts, po::options_description& configOptions, po::positional_options_description& pOptsOpDesc& genericOptions) const {addmsg,assert}
+// Client app needs to override below method. Return value from this function is used as the exit code of the client app
+// Note: This function will never be invoked for a exe that is started as a service
+virtual short ExecuteCommandLineCommand(const nprms& progOptions, ingappdistcommmgr* dMgr) {addmsg,assert}
+// Client app overrides below to accept message that came from it's service call
+// Default behavior: message-manager is populated and message handled
+virtual bool HandleMessageFromService(const ngappcmdmsg& msg) {debuglogcontext,addmsg,assert}
+
+//
+// Service application
+//
+// Service app needs to provide below method and return command result. Framework passes results to the clientapp that 
+// made this service request
+// Note: No override is needed for pure client apps as long as they don't additionally provide a service
+virtual bool HandleServiceRequestFromClient(ngappcmdres& resultOfCommand, const ngappcmd& cmd, cngappproxy* clientApp) {addmsg,assert}
+// Below method is applicable only for service apps and only when service is one distributed portion of a command
+// In all other cases, it is an error to call below method and they return -1
+bool IsServingADistributedCommand() const {}
+int GetRankOfService() const {assert}
+// Essentially the number of services to which a command is distributed
+int GetTotalNumberOfRanks() const {assert}
+
+//
+// Override IAnsoftApplication methods
+//
+
+// Return a message manager that is unique for each thread
+virtual msgmgr* GetIMessageManager() {tmsgmgrget}
+// Temp dir is obtained as follows: from batchoptions, from scheduler, from user's file-backed registry, from install's config dir
+virtual AString GetTempDir() {ngregistryaccess}
+// Used for file based registry
+// Return something like hfss12. For now hardcode to "Maxwell14.0"
+virtual AString GetVersionedProductExeName() const {ZZZ}
+// Return the directory from which this executable (argv[0]) was launched.
+virtual AString GetExeDirectory() const {}
+virtual AString GetInstallationDir() {ZZZ}
+// Dummy implementations provided for below
+virtual void SetGlobalManager(const AString& name, IGlobalManager* gm) {assert}
+virtual IGlobalManager* GetGlobalManager(const AString& name) const {assert}
+virtual void GetLaunchingUserCredentials(LaunchAsUserType& launchAsUserType, AString& userName, AString& domainName, AString& password) const {assert}
+virtual void PostMessageToWindow(void* wndHandler, int messageType, unsigned int wparm,unsigned int lparm)  {assert}
+virtual bool SupportsArrayVariables() const  {assert}
+virtual bool SupportsExitNoSaveInWBDataInteg() const  {assert}
+virtual void GetPreferredIPAddress(AString& preferredIPAddress) const {ZZZ}
+virtual bool SupportsAnsoftCOM() const  {ZZZ}
+virtual bool SupportsFileBasedRegistry() const {ZZZ}
+
+msghandler* GetIMessageHandler() {ZZZ}
+}
+
+protected:
+// The type of service connection requested by the client. Options: dedicated connection (where
+// client and server are connected by dedicated tcp endpoints), on-demand connection: here client
+// establishes connection with service, issues a request disconnects and connects back later,
+// until the client no longer needs the service and shuts it down
+enum { kDedicatedConnectionToService, kOnDemandConnectionToService };
+
+private:
+ClassMethods {
+// Set "isStartedAsService" to true when the application is invoked through AnsoftCOM's CoCreateInstance to access
+// a particular service. 
+// It should be set to false when app is launched directory by user through a command-line interface
+// Difference between the two modes: when started as a client, a callback listener is started automatically
+// so it can intercept messages/results from the service request it made
+Constructor(bool isStartedAsService){init_params_w_ACHAR("NgAnsoftCOMApplicationOptionsItem")}
+Destructor(){tmsgmgrdest,deletem_commandLineParams}
+
+bool ServiceAppMainFunction(int argc, char** argv) {debuglogcontext,ansdebug,addmsg}
+bool PrepareNgAppUsingCommandline(const nprms& progOptions) {}
+// Waits on all events (cmd-completed/cmd-arrived/cmd-message-arrived/quit-now)
+// Processes events such as cmd-arrived and quit-now
+// For anything else, adds error message and goes back to processing. 
+// In the case of quit-event, it returns instead of entering into processing events loop
+// To process command handler, invokes apps virtual HandleServiceRequestFromClient. 
+// When HandleServiceRequestFromClient returns, it passes cmdresult to callback stub
+int ProcessNgAppServiceEvents(int argc, char** argv) {}
+
+//
+// AnsoftCOMApplication overrides
+//
+virtual hres InitInstance(str& commandLineParams) {debuglogcontext,addmsg}
+virtual hres ExitInstance () {debuglogcontext,finalacom}
+}
+
+ClassMembers {
+AppStartPrms m_appStartupParams {get}
+tmsgmgr m_perThreadMsgMgr {get}
+bool m_isServiceApp {get}
+acomconfigmgr* m_AnsoftCOMConfigMgr {get}
+int m_rankOfService {na}
+int m_totalNumRanks {na}
+nprms m_commandLineParams {na}
+block m_ansofCOMParamsBlock {na}
+int m_serviceConnectivityType {na}
+
+// Represents the current state of the application
+bool m_isMainThreadBusy {na}
+
+}
+
+}

@@ -1,0 +1,16 @@
+CodeType: Class
+
+class NgAppAnsoftCommandResult: none {
+ 
+public:
+
+ClassMethods {
+
+}
+
+private:
+
+ClassMembers {
+}
+
+}

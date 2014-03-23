@@ -1,0 +1,38 @@
+CodeType: Class
+
+class INgAppCommandCallback: none {
+ 
+public:
+
+// Command status:
+// kNgAppCommandPreparingToRun -> it's in the process of parsing command lines, setting up env (batchoptions)
+enum CommandState { kNgAppCommandPreparingToRun, kNgAppCommandRunning, kNgAppCommandCompleted_Success,
+                    kNgAppCommandCompleted_Failed };
+
+ClassMethods {
+// Default handler pushes all below messages to message manager and message handler will take 
+// action (handling might flush the messages to log file or send over the tcp/ip connection)
+// Set isAborted to 'true' to abort command. It is set to false before invoking below methods
+virtual void OnNgAppCommandMessage(const ngcmdmsg& msg) = 0 {}
+virtual void OnNgAppCommandProgress(const ngcmdprogress& prog) = 0 {}
+virtual void OnNgAppCommandResult(const ngcmdres& res) = 0 {}
+
+// Use below to obtain command's distribution-level, rank info
+virtual const ngcmddef& GetNgAppCommandDef() const = 0 {}
+virtual const ngappcmdline& GetNgAppProgramGeneralOptions() = 0 {}
+// If you didn't cache the command parameter, use the below block to restore 
+// cmd parameters datastructure
+virtual const block& GetNgAppCommandParameters() = 0 {}
+
+virtual CommandState GetCommandCurrentState() const = 0 {}
+virtual bool IsCommandAbortedByUser() const = 0 {retf}
+
+// Use services
+// Created services must be released using OnDoneUsingService. 
+// Until services are released, they will be running
+// 'nodeList' could be multiple cores of the same machine. Pass 'localMachine' as true
+// if it is known that all services are local to this machine
+virtual ingserviceproxy* CreateNgAppDistributedCommService(strvec& nodeList, bool allServicesOnLocalMachine = false) = 0;
+}
+
+}

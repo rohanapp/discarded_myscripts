@@ -1,0 +1,46 @@
+CodeType: Class
+
+// 
+// Purpose: 
+// - Interface that is implemented by desktops are
+//   merged into integrated desktop.
+// - Has legacy implementation for methods (overridden from
+//   DesktopApp) that are potentially needed in
+//   integrated desktop environment. For e.g. to access
+//   one product's branding, for legacy translation
+//
+class ILegacyDesktopApp : none {
+ 
+public:
+
+ClassMethods {
+
+virtual str GetHelpFile() const = 0 {}
+virtual bool ProductSupportsContextHelp() const = 0 {}
+
+virtual bool DoAutomaticDesignCleanup() const = 0 {}
+
+virtual dword GetSplashScreenBitmapID() const = 0 {}
+str GetProductTrademarkSymbol() const = 0 {}
+
+virtual void ExtendMainMenu(menu& menu, cmdtargetvec& vecCmdTargets) = 0 {}
+virtual void GetCustomBatchCommands(strintmap& cmds) const = 0 {}
+virtual bool DoCustomBatchCommand(str& command, strvec& args) = 0 {}
+
+virtual str GetVersionDependentProgID() const = 0 {}
+
+virtual bool AllowOpenOfVersion(str& errMsg, const lfn& projectFile, const lver& fileVersion) const = 0 {}
+
+virtual bool GetShowProjectSimulateAllMenu() const = 0 {}
+virtual bool GetShowScriptingMenuItems() const = 0 {}
+virtual bool GetShowSaveAsTechnologyFileMenuItem() const = 0 {}
+virtual bool SupportsAnsoftCOM() const = 0 {}
+virtual bool SupportsArrayVariables() const = 0 {}
+virtual bool SupportsExitNoSaveInWBDataInteg() const = 0 {}
+virtual bool SupportsFileBasedRegistry() const = 0 {}
+virtual bool AllowUseOfDesignDatasetsInGeometry() const = 0 {}
+bool GetSupportsWorkspaceUsabilityOptions() const = 0 {} 
+bool SupportMultiThreadsPrePostProcessing() const = 0 {}
+}
+
+}

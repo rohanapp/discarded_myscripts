@@ -1,0 +1,6 @@
+set USE_ASSERT=TRUE
+set ANSOFT_DEBUG_MODE=1
+set ANSOFT_DEBUG_LOG_SEPARATE=1
+set ANSOFT_DEBUG_LOG=d:\dtemp\debuglogs\ansdebug
+
+

@@ -1,0 +1,32 @@
+CodeType: Class
+
+// 
+// Purpose: 
+// - Represents a hierarchical design (component-instances aka subDesigns, 
+//   Leaf parts, Leaf boundary conditions, etc.)
+//
+// State:
+// - Container of 'subDesigns'
+// - Container of leaf parts, leaf boundary conditions, etc.
+// 
+class DesktopDesign : none {
+ 
+public:
+
+ClassMethods {
+Constructor(){}
+Destructor(){}
+
+// 
+
+}
+
+private:
+
+ClassMembers {
+listcompinsts m_subDesigns;
+partslist m_leafParts;
+modelsmgr* m_myManager;
+}
+
+}

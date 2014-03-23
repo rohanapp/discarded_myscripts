@@ -1,0 +1,26 @@
+CodeType: Class
+ExtraIncludeInHeaders: none
+ExtraIncludeInCpp: none
+
+//
+// Extractors can be used to extract one of the following types of data:
+// Progress: 
+// Log: batchlog is displayed to the user per engine
+// Info:
+// Results:
+// There is an extractor and a viewer
+class Sample : none {
+
+public:
+
+ClassMethods {
+Constructor() {}
+Destructor() {}s
+}
+
+private:
+
+ClassMembers {
+}
+
+}

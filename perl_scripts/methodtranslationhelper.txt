@@ -1,0 +1,36 @@
+// Utility functions
+// The declatation language specifies that it leverage a utility. Parser generates
+// template code for such utility. The parser also generates the include directives/
+// Dummy stack vars are created for all the parameters needed by utility function
+// my %utilityCodeIncludeDirectives = { utilityName => (include directives) }
+// my %utilityCodeImplBlock = { utilityName => (impl lines that can be uses as is to generate code) }
+fileexists: ngcore/ngutils/LongFilenameOperations.h {
+lfn lfn($1);
+bool exists = (LFN_Exists(lfn) && !LFN_IsExistingDirectory(lfn));
+}
+
+direxists: ngcore/ngutils/LongFilenameOperations.h {
+lfn lfn($1);
+bool exists = (LFN_Exists(lfn) && LFN_IsExistingDirectory(lfn));
+}
+
+addmsg: {
+IMessageManager* msgMgr = ::GetMessageManager();
+AnsoftMessage am;
+am.SetMessageText(ACHAR(""));
+msgMgr->AddAnsoftMessage(am);
+}
+
+ansdebug: ngcore/ngutils/ans_debug.h {
+::AnsDebug(ACHAR(""), 1, ACHAR("\n"));
+}
+
+assert: ngcore/ngutils/assert.hxx {
+SS_ASSERT();
+}
+
+portab: ngcore/common/portab.h {
+}
+
+wintypes: ngcore/common/Win32Types.h {
+}

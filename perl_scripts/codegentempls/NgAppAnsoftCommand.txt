@@ -1,0 +1,45 @@
+CodeType: Class
+
+//
+// This class encapsulates the entire job. It'll include command parameters that come from command-line option.
+// As the command runs, messages/progress/results are managed here. The final status is also included.
+
+class NgAppAnsoftCommand: ingcmdcallback {
+ 
+public:
+
+ClassMethods {
+constructor(const ngcmddef& cmdDef, CommandState state) {}
+destructor() {}
+
+// Default handler pushes all below messages to message manager and message handler will take 
+// action (handling might flush the messages to log file or send over the tcp/ip connection)
+// Set isAborted to 'true' to abort command. It is set to false before invoking below methods
+virtual void OnNgAppCommandMessage(const ngcmdmsg& msg) {}
+virtual void OnNgAppCommandProgress(bool& isAborted, const ngcmdprogress& prog) {}
+virtual void OnNgAppCommandResult(const ngcmdres& res) {}
+
+virtual const ngcmddef& GetNgAppCommandDef() const {}
+virtual const ngappcmdline& GetNgAppProgramGeneralOptions() {}
+virtual const block& GetNgAppCommandParameters() {}
+
+virtual bool IsCommandAbortedByUser() const {retf}
+virtual CommandState GetCommandCurrentState() const {}
+
+void SetIsCommandAbortedByUser() {}
+void SetCommandCurrentState(CommandState state) {}
+}
+
+private:
+
+ClassMembers {
+ngcmddef m_cmdDef;
+// Command parameters specific to command
+block m_cmdParams;
+INgAppCommandCallback::CommandState m_cmdCurrentState
+// Command could still be running as it may not be able to handle abort at the
+// time user issues abort command
+bool m_isCommandAbortedByUser;
+}
+
+}

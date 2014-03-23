@@ -1,0 +1,21 @@
+CodeType: Class
+
+//
+// Purpose
+//
+class INgAppDistributedCommMgr {
+
+public:
+
+ClassMethods {
+
+//
+// Interface provided to the commands to acces local or remote services
+//
+virtual isngappproxy* NgDistributedServiceInterface() = 0{}
+virtual ngcmd* CreateNewNgAppAnsoftCommand(const str& serviceReq, const ngcmdprms& prms, bool isLocalMachine,
+                                           const strvec& machineList, int rankIfService) const = 0 {}
+
+}
+
+}

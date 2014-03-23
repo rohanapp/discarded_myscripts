@@ -1,0 +1,11 @@
+CodeType: Class
+
+// 
+// Purpose: 
+// - Geometry3D interface for use by Circuit design-editor client
+//
+class IGeom3DEditorForCircuit : none {
+ 
+public:
+
+}

@@ -1,0 +1,205 @@
+----------------------------------
+#scratch (run in cygwin)
+perl -F\" -ane "print \"$F[1]\n\"" e:\dtemp\foo.txt
+perl -pi.bak -e "s/^call/REM call/i" temp.bat
+
+
+Commands to use during builds:
+perl -Ie:\programs\scripts\perl_scripts e:\programs\perl_scripts\checklogs.pl --view c:\ANSYSDev\Repo1 --ignore 12
+perl -Ie:\programs\scripts\perl_scripts e:\programs\perl_scripts\dirsizesincurrdir.pl
+perl -Ie:\programs\scripts\perl_scripts e:\programs\perl_scripts\currentdirsize.pl
+
+
+#Recreate symlinks
+#Recreate missing symlinks in a repository: Run in windows command-prompt
+#****!!!RUN FROM NEXTGEN DIRECTORY or other directory with .symlinks file!!!!!!!*********
+perl -ane " $F[1] =~ s/\//\\/g; $F[2] =~ s/\//\\/g; if (!(-e $F[1])) { print \"$F[1]\n\"; if ($F[0] eq \"f\") {system(\"mklink $F[1] $F[2]\")} else {system(\"mklink /D $F[1] $F[2]\n\")} } " .\.symlinks
+#Create non-existing directories
+perl -ane "/(^.+)\\.+$/; if (!(-e $1)) { print \"mkdir $1\n\"; }" e:\dtemp\foo.txt
+perl -ane "/(^.+)\\.+$/; if (!(-e $1)) { system(\"mkdir $1\"); }" e:\dtemp\foo.txt
+
+#copy files (specified as full path) to a single folder
+perl -ne "system(\"copy $_ .\")" ..\foo.txt
+
+#Dump LHS text for lines matching format: "<LHS>: <header/cppfile> {"
+#Input contents are from utilitytranslationhelper.txt file
+perl -ne "print \"// $1\n\" if (/^\s*(\w+):.+{\s*$/)" foo.txt
+
+#Dump LHS text for lines matching format: "<LHS>: command-separated-class-names and header file paths
+#Input contents are from typetranslationhelper.txt file
+perl -ne "print \"// $1\n\" if (/^\s*(\w+):.+$/)" foo.txt
+
+#copy files (specified as relative-path from reference dir) to a hierarchical folder structure
+#Note: MKDIR creates any intermediate directories in the path, if needed
+#Make directory structure
+perl -ne "use File::Copy; my ($dir,$ff) = ($_ =~ m/^(.+\\)(.+)$/g); system(\"mkdir $dir\") if !(-e $dir); chomp($_); $_ =~ s/\\/\//g; my $fpath = \"C:/ANSYSDev/Repo1/\" . $_; copy($fpath, $dir) or die \"Error in copy\";" ..\foo.txt
+
+
+
+#Disable all builds/clean
+perl -pi.bak -e "s/^call/REM call/i" temp.bat
+#Enable all builds/clean
+perl -pi.bak -e "s/^REM\s+call/call/i" temp.bat
+#clean+build only-release 
+perl -pi.bak -e "s/^REM\s+call(.+release.*)/call\1/i;" -e "s/^call(.+debug.*)/REM call\1/i" temp.bat
+#clean+build only-debug
+perl -pi.bak -e "s/^REM\s+call(.+debug.*)/call\1/i;" -e "s/^call(.+release.*)/REM call\1/i" temp.bat
+#clean+build based on allow = build this; disallow = dont build (overwrites allow changes too); unmatched ones: as is
+
+# Allow flags
+  - everything: allow = .
+# Disallow: Combine below
+Disallow all projects except integrated-desktop
+  reportsetup|ModelerTestProduct|MaxCirDesktop|Simplorer|MaxwellLight|reporter|modeler|maxcirc|simplorer|maxwell
+Disallow clean
+  cleansln
+Build configurations
+Disallow debug builds
+  buildview_debug
+Disallow release builds
+  buildview_release
+      
+perl -pi.bak -e "BEGIN {$projExclIntegDtop='reportsetup|ModelerTestProduct|MaxCirDesktop|Simplorer|MaxwellLight|reporter|modeler|maxcirc|simplorer|maxwell';$allow=qr/(.)/i; $disallow=qr/$projExclIntegDtop|cleansln/i}" -e "s/^REM\s+call(.+$allow.*)/call\1/i;" -e "s/^call(.+$disallow.*)/REM call\1/i" c:\Users\nappann\bin\temp.bat
+perl -n -e "print $_ if (/^call/i)" c:\Users\nappann\bin\temp.bat
+
+#Filter vcxproj or sln files from a file list
+perl -ne "if ($_ =~ /vcxproj$/i) {$_ =~ s/^(.+)(nextgen\\.+)$/\2/i; print $_;}" foo.txt
+perl -ne "if ($_ =~ /sln$/i) {$_ =~ s/^(.+)(nextgen\\.+)$/\2/i; print $_;}" foo.txt
+perl -ne "if ($_ =~ /xml$/i) {$_ =~ s/^(.+)(nextgen\\.+)$/\2/i; print $_;}" foo.txt
+
+#just a test to see why case-insensitive match wasn't working when using variables for pattern
+perl -p -e "BEGIN {$pat=qr/debug/i}" -e "s/($pat)/##\1##/i" temp.bat
+
+
+awk scipts
+----------
+
+# Get rid of '//' comments that are on their own lines or at the end of a code fragment
+awk ' \
+{ \
+  if ($0 !~ /^\s*\/\//) { \
+    split($0, codeFrags, "//", seps); \
+    if (codeFrags[1] != "") \
+      printf("%s\n", codeFrags[1]); \
+  } \
+}' goo.txt > goo1.txt
+
+
+# Put each function on a single line. 
+# !!Prepare input file!!!
+# - Input file should only contain functions
+# - No semicolons in comments
+# - No '//' comment on the same line as semicolocn
+awk ' \
+BEGIN \
+{ \
+  RS = ";";\
+} \
+/virtual/ \
+{ \
+  split($0, lineContents, "\n", sepContents); \
+  for(currLine in lineContents) { \
+    printf("%s ", lineContents[currLine]); \
+  } \
+  printf("\n"); \
+}' goo1.txt > goo2.txt
+
+# Remove pure virtual
+awk -F= '/virtual/ \
+{ \
+  if (NF == 2) { \
+    printf("%s\n", $1); \
+  } else { \
+    semicolonIndex = index($0, ";"); \
+    if (semicolonIndex) \
+      printf("%s\n", substr($0, 1, semicolonIndex-1)); \
+    else \
+      printf("%s\n", $0); \
+  } \
+}' goo2.txt > goo3.txt
+
+# cpp
+awk ' \
+BEGIN \
+{ \
+  firstIndentSpace = "  "; \
+  outputHeader = 0; \
+  className = "LegacyDesignerApp"; \
+  assertRet = 1; \
+  assertCall = "::GetIDesktop()->GetIMessageHandler()->AnsoftMessageBox"; \
+  assertStatement = sprintf("%s\n%s(ACHAR(\"%s: Method unimplemented!\"), MB_OK)", \
+                             assertCall, firstIndentSpace, className); \
+  delegateMemberName = "m_integDtopApp->"; \
+} \
+{ \
+  if (assertRet == 1) { \
+    funcBody = sprintf("%s" "%s;\n", firstIndentSpace, assertStatement); \
+  } else { \
+    funcBody = firstIndentSpace; \
+  }  \
+  funcFieldIndex = 0; \
+  noSpaceIndex = 0; \
+  for (ii = 2; ii <= NF; ii++) { \
+    parIndex = index($ii, "("); \
+    if (funcFieldIndex == 0 && parIndex) { \
+      if (parIndex == 1) \
+        funcFieldIndex = ii-1; \
+      else \
+        funcFieldIndex = ii; \
+    } \
+    if (parIndex == 1) \
+      noSpaceIndex = ii; \
+  } \
+  \
+  funcReturnType = $2; \
+  if (!outputHeader) { \
+    for (ii = 2; ii <= NF; ii++) { \
+     if (ii != 2 && ii < funcFieldIndex) funcReturnType = sprintf("%s %s", funcReturnType, $ii); \
+     if (ii != 2 && ii != noSpaceIndex) { \
+        printf(" "); \
+      } \
+      if (ii == funcFieldIndex) printf("%s::", className); \
+      printf("%s", $ii); \
+    } \
+    isVoidReturn = index(funcReturnType, "void") ? 1 : 0; \
+    if (!isVoidReturn) { \
+      funcBody = assertRet ? \
+                     sprintf("%s" "%s" "return (%s)0;\n", \
+                        funcBody, firstIndentSpace, funcReturnType) : \
+                     sprintf("%s" "return %s" "%s" "();" "\n", funcBody, delegateMemberName, $funcFieldIndex); \
+    } else {\
+      funcBody = assertRet ? \
+                     sprintf("%s" "%s" "return;\n", \
+                        funcBody, firstIndentSpace) : \
+                     sprintf("%s" "%s" "%s" "();" "\n", funcBody, delegateMemberName, $funcFieldIndex); \
+    } \
+    printf("\n{\n" "%s" "}\n\n", funcBody); \
+  } \
+  if (outputHeader) { \
+    printf("%s" "virtual ", firstIndentSpace); \
+    for (ii = 2; ii <= NF; ii++) { \
+     if (ii != 2 && ii != noSpaceIndex) { \
+        printf(" "); \
+      } \
+      printf("%s", $ii); \
+    } \
+    printf(";\n"); \
+  } \
+} \
+' goo3.txt > goo4.txt
+
+#
+awk ' { \
+  printf("%s {\n  SS_ASSERT(0);\n}\n\n", $0); \
+}' goo2.txt
+
+# convert method imp to declarations
+awk ' \
+{ \
+  gsub(/\n$/, ""); \
+  if ($0 !~ /^{|^}|^\s/) { \
+    if ($0 != "") \
+      printf("  virtual %s;\n", $0); \
+  } \
+}' goo.txt > goo1.txt
+

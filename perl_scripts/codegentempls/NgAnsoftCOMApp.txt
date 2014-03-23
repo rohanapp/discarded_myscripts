@@ -1,0 +1,20 @@
+CodeType: Class
+
+class NgAnsoftCOMApplication: acomapp {
+ 
+public:
+
+ClassMethods {
+// Client app overrides below to accept message that came from it's service call
+// Default behavior: message-manager is populated and message handled
+virtual bool HandleClientCallbackFromService(const block& msgAsBlock) {debuglogcontext,addmsg,assert}
+
+//
+// Service application
+//
+// Service app needs to provide below method and return command result. Framework passes results to the clientapp that 
+// made this service request
+// Note: No override is needed for pure client apps as long as they don't additionally provide a service
+virtual bool HandleServiceRequestFromClient(const block& cmdAsBlock) {debuglogcontext,addmsg,assert}
+}
+}

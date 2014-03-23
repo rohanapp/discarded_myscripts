@@ -1,0 +1,20 @@
+CodeType: Class
+//
+// Purpose
+//
+// NgApp goes through this class to obtain an interface to command provider.
+// Such an indirection enables customization of ngapp framework. For e.g.
+// NgAppCommandProviderFilter class can allow external DLLs to be command providers 
+class INgAppCommandProviderFilter : none {
+
+public:
+
+ClassMethods {
+virtual ingappservices* GetProviderForCommand(const str& uniqueCmdName) = 0 {}
+// return true if app is started via cocreate (for e.g. desktopjob agent and desktopproxy)
+virtual bool IsNgAppAServiceApp() const = 0 {rett}
+}
+
+}
+"Monitor", "LogFile", "BatchOptions", "EnvVars", "WorkDir",
+ "JobName", "ProdName", "ProdVersion"

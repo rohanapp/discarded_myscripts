@@ -1,0 +1,21 @@
+CodeType: Class
+
+class NgAppAnsoftCommandProgress: none {
+ 
+public:
+
+ClassMethods {
+
+str GetProgressMajorText() const {}
+str GetProgressMinorText() const {}
+double GetPercentDone() const {}
+// Time stamp, estimates, etc.
+
+}
+
+private:
+
+ClassMembers {
+}
+
+}

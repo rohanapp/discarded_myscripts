@@ -1,0 +1,20 @@
+CodeType: Class
+//
+// Purpose
+// REVISIT: Shortcut taken for now. 'main' function created an object of this class and passes to NgApp
+class NgAppCommandProviderFilter : ingappcmdproviderfilter, ingappcmdprovider {
+
+public:
+
+ClassMethods {
+virtual ingappservices* GetProviderForCommand(const str& uniqueCmdName) {returnmember}
+// return true if app is started via cocreate (for e.g. desktopjob agent and desktopproxy)
+virtual bool IsNgAppAServiceApp() const {rett}
+}
+
+ClassMembers
+{
+dsoprovider m_dsoProvider;
+}
+
+}
