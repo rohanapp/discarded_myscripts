@@ -1,0 +1,53 @@
+rem Directory structure beneath <ansys_inc> (which is shared)
+rem 
+rem <ansys_inc>\Certified\Ansys Inc - certified build installed here
+rem <ansys_inc>\Certified\Installers - certified build installers available here
+rem <ansys_inc>\Certified_weekly\Ansys Inc - "frozen" certified build installed here (updated every Wednesday)
+rem <ansys_inc>\Certified_weekly\Installers - "frozen" certified build installers available here (updated every Wednesday)
+
+
+set shared_ansys=D:\ANSYS Inc
+set instance=Certified
+set instance=Certified_weekly
+set logfile=%instance%_%date:~-4,4%%date:~-7,2%%date:~-10,2%.log
+set logfile2=%instance%_install_%date:~-4,4%%date:~-7,2%%date:~-10,2%.log
+
+
+echo ************************************************* >> %logfile%
+echo *                                               * >> %logfile%
+echo * Artifactory download and install script start * >> %logfile%
+echo *                                               * >> %logfile%
+echo ************************************************* >> %logfile%
+echo. >> %logfile%
+
+echo. >> %logfile%
+echo *** Uninstall *** >> %logfile%
+echo. >> %logfile%
+
+REM *** Uninstall the old version - can't use %AWP_ROOT150%, even if it was set we are using multiple install locations
+CALL "%shared_ansys%\%instance%\ANSYS Inc\v150\Uninstall.exe" -silent -keepAppData  >> %logfile%
+
+echo. >> %logfile%
+echo *** Update installers from Artifactory *** >> %logfile%
+echo. >> %logfile%
+
+REM *** wget.exe, the scripts and the log files are all going in c:\apps
+cd C:\apps >> %logfile%
+wget.exe -m -np -nH --cut-dirs=3  --http-user=username --http-password=password http://canatsrv01:8080/artifactory/v150_Certified/winx64/ -P "%shared_ansys%\%instance%" -a %logfile%
+
+echo. >> %logfile%
+echo *** Install - see separate log *** >> %logfile%
+echo. >> %logfile%
+
+REM *** Install full unified This can be modified to only install items that you need.  Currently does not install prereqs.
+REM Had to write to different log file as ansys installer doesn't release lock quick enough for remaining lines in this batch file
+CALL "%shared_ansys%\%instance%\winx64\setup.exe" -silent  -install_dir "%shared_ansys%\%instance%\ANSYS Inc" >> %logfile2%
+
+
+echo. >> %logfile%
+echo *********************************************** >> %logfile%
+echo *                                             * >> %logfile%
+echo * Artifactory download and install script end * >> %logfile%
+echo *                                             * >> %logfile%
+echo *********************************************** >> %logfile%
+echo. >> %logfile%
