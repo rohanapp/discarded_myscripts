@@ -1,6 +1,7 @@
 use strict;
 use Cwd;
 use Getopt::Long;
+use File::Basename;
 
 my $gVerbose = 0;
 
@@ -30,7 +31,7 @@ MAIN:
 
     my $initialWorkDir = getcwd;
 
-    my $perlScriptsDir = "E:/programs/perl_scripts";
+    my $perlScriptsDir = dirname(__FILE__);
     $gSystemCommand = "perl $perlScriptsDir/dofordir.pl -cmd \"perl $perlScriptsDir/currentdirsize.pl\"";
     print("Running command '$gSystemCommand'...\n");
 
