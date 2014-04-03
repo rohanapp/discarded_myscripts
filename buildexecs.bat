@@ -1,18 +1,35 @@
 @echo off
 
+REM !!!!!!!!!!!SCRIPT CONFIGURATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+REM This script requires a file with the name config.cmd in
+REM its directory. Use templateconfig.cmd as a basis for your config.cmd
+REM This file should contains Windows batch commands
+REM to set values for following variables: 
+REM 1) gitproj (Git project name),
+REM 2) repodrive1/repodir1 (first drive/folder that contains repositories),
+REM 3) repodrive2/repodir2 (second drive/folder that contains repositories)
+REM NOTE: gitproj is the name of folder (repo) that contains nextgen. 
+REM So gitproj should not include nextgen folder, but be one level above it.
+
 set currwd=%CD%
 
-REM call buildview Repo1 core
-REM call buildview Repo1 statespacefitter
+call config.cmd
+if errorlevel 1 (
+  echo Error occured during invocation of config.cmd. Make sure this file exists/runs
+  goto error
+)
+
+REM call buildview %gitproj% core
+REM call buildview %gitproj% statespacefitter
 
 REM Comment out reporter as regserver of test comengine throws up a dialog, stopping
 REM the full build process!
-REM call buildview Repo1 reporter
+REM call buildview %gitproj% reporter
 
-REM call buildview Repo1 djob
-call buildview Repo1 hfss
-call buildview Repo1 designer
-call buildview Repo1 maxwell
+REM call buildview %gitproj% djob
+call buildview %gitproj% hfss
+call buildview %gitproj% designer
+call buildview %gitproj% maxwell
 
 goto finish
 

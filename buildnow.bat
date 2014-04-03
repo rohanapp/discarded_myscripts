@@ -1,7 +1,7 @@
 @echo off
 
-set reponame=Repo1
-set viewdir=c:\ANSYSDev\%reponame%\nextgen
+set reponame=vdirepo1
+set viewdir=C:\ansysdev\repos\%reponame%\nextgen
 
 REM Ensure log files are created by devenv
 set acprodsdir=%viewdir%\ansoftcore\products
@@ -14,13 +14,13 @@ FOR %%d in (%reptestdir%\64Release %reptestdir%\64Debug %modtestdir%\64Debug %mo
   )
 )
 
-REM call cleansln %viewdir%\ansoftcore\Core.sln release
+call cleansln %viewdir%\ansoftcore\Core.sln release
 REM call cleansln %viewdir%\ansoftcore\products\reportsetup\reportsetuptest\ReportSetupTest.sln release
 REM call cleansln %viewdir%\products\geometry3d\ModelerTestProduct\ModelerTestProduct.sln release
 REM call cleansln %viewdir%\MaxCirDesktop.sln release
 REM call cleansln %viewdir%\Simplorer.sln release
-REM call cleansln %viewdir%\HFSS.sln release
-REM call cleansln %viewdir%\Nextgen_NoHfss.sln release
+call cleansln %viewdir%\HFSS.sln release
+call cleansln %viewdir%\Nextgen_NoHfss.sln release
 REM call cleansln %viewdir%\MaxwellLight.sln release
 
 call buildview_release %reponame% core
@@ -33,13 +33,13 @@ call buildview_release %reponame% hfss nocore
 call buildview_release %reponame% designer nocore
 REM call buildview_release %reponame% maxwell nocore
 
-REM call cleansln %viewdir%\ansoftcore\Core.sln Debug
+call cleansln %viewdir%\ansoftcore\Core.sln Debug
 REM call cleansln %viewdir%\ansoftcore\products\reportsetup\reportsetuptest\ReportSetupTest.sln debug
 REM call cleansln %viewdir%\products\geometry3d\ModelerTestProduct\ModelerTestProduct.sln debug
 REM call cleansln %viewdir%\MaxCirDesktop.sln debug
 REM call cleansln %viewdir%\Simplorer.sln debug
-REM call cleansln %viewdir%\HFSS.sln debug
-REM call cleansln %viewdir%\Nextgen_NoHfss.sln debug
+call cleansln %viewdir%\HFSS.sln debug
+call cleansln %viewdir%\Nextgen_NoHfss.sln debug
 REM call cleansln %viewdir%\MaxwellLight.sln debug
 
 call buildview_debug %reponame% core

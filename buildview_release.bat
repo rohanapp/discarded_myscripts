@@ -2,28 +2,32 @@
 
 set currwd=%CD%
 
-e:
+REM See buildexecs.bat for comments about "SCRIPT CONFIGURATION"
+
+call config.cmd
+if errorlevel 1 (
+  echo Error occured during invocation of config.cmd. Make sure this file exists/runs
+  goto error
+)
+
+%repodrive1%:
+if errorlevel 1 (
+  echo Invalid drive letter in repodrive1: %repodrive1%
+  goto error
+)
 
 echo Trying to cd to git views
-echo cd \ANSYSDev\repos\%1
-cd \ANSYSDev\repos\%1
+echo cd %repodir1%\%1
+cd %repodir1%\%1
 if errorlevel 1 goto tryc
 echo This is a git view
 goto founddir
 
 :tryc
-echo Trying git views on c drive
-c:
-echo cd \ANSYSDev\%1
-cd \ANSYSDev\%1
-if errorlevel 1 goto trye
-goto founddir
-
-:trye
-echo Trying clearcse views on e drive
-e:
-echo cd \views\%1
-cd \views\%1
+echo Trying git views on %repodrive2% drive
+%repodrive2%:
+echo cd %repodir2%\%1
+cd %repodir2%\%1
 if errorlevel 1 goto error
 goto founddir
 
