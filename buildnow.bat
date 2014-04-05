@@ -1,7 +1,23 @@
 @echo off
 
-set reponame=vdirepo1
-set viewdir=C:\ansysdev\repos\%reponame%\nextgen
+REM See buildexecs.bat for comments about "SCRIPT CONFIGURATION"
+
+set thisfiledir=%~dp0%
+echo call %thisfiledir%config.cmd
+call %thisfiledir%config.cmd
+if errorlevel 1 (
+  echo Error occured during invocation of config.cmd. Make sure this file exists/runs
+  goto error
+)
+
+%repodrive1%:
+if errorlevel 1 (
+  echo Invalid drive letter in repodrive1: %repodrive1%
+  goto error
+)
+
+set reponame=%gitproj%
+set viewdir=%repodir1%\%reponame%\nextgen
 
 REM Ensure log files are created by devenv
 set acprodsdir=%viewdir%\ansoftcore\products

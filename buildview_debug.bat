@@ -4,7 +4,9 @@ set currwd=%CD%
 
 REM See buildexecs.bat for comments about "SCRIPT CONFIGURATION"
 
-call config.cmd
+set thisfiledir=%~dp0%
+echo call %thisfiledir%config.cmd
+call %thisfiledir%config.cmd
 if errorlevel 1 (
   echo Error occured during invocation of config.cmd. Make sure this file exists/runs
   goto error

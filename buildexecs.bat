@@ -13,7 +13,9 @@ REM So gitproj should not include nextgen folder, but be one level above it.
 
 set currwd=%CD%
 
-call config.cmd
+set thisfiledir=%~dp0%
+echo call %thisfiledir%config.cmd
+call %thisfiledir%config.cmd
 if errorlevel 1 (
   echo Error occured during invocation of config.cmd. Make sure this file exists/runs
   goto error
