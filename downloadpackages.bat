@@ -19,8 +19,7 @@ set downloaddir=%artifact_download_dir%
 
 REM *** Specify the directory where you have enough disk space to store the installer
 REM *** This directory may need to be manually cleaned out periodically
-c:
-cd %downloaddir%
+cd /D %downloaddir%
 if errorlevel 1 (
   echo '%artifact_download_dir%' does not exist
   goto error
