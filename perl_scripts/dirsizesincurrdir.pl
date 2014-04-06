@@ -33,7 +33,7 @@ MAIN:
 
     my $perlScriptsDir = dirname(__FILE__);
     $gSystemCommand = "perl $perlScriptsDir/dofordir.pl -cmd \"perl $perlScriptsDir/currentdirsize.pl\"";
-    print("Running command '$gSystemCommand'...\n");
+    PrintIfVerbose("Running command '$gSystemCommand'...\n");
 
     chdir($initialWorkDir);
     RunSystemCommandInCurrDir();

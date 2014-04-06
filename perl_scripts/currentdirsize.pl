@@ -14,7 +14,8 @@ sub CurrentDirSize
     my $succOpenDir = opendir($dirHandle, ".");
     if (!$succOpenDir) {
      my $curDir = getcwd;
-      print "\nWarning: Unable to open directory '$curDir'! Directory ignored from size calculations!\n";
+      # Write to stderr
+      warn "\nWarning: Unable to open directory '$curDir'! Directory ignored from size calculations!\n";
       return;
     }
     
@@ -51,6 +52,6 @@ MAIN:
     my ($dirname, $dirdir, $dirext) = ParseFilePathComponents($gStartupDir);
 
     my $sizeInMB = CurrentDirSize()/1000/1000; # literally 'mega' (1e6) bytes 
-    print "$dirname:\t\t$sizeInMB (mega bytes)\n";
+    print "$dirname$dirext:\t\t$sizeInMB (mega bytes)\n";
 }
 

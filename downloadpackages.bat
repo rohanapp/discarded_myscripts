@@ -36,11 +36,9 @@ IF EXIST %wgetlog% (
 
 echo Starting all package downloads...
 
-REM set cut-dirs to be at least 2 to avoid artifactory/simple download-folder-structure
-
-FOR %%P in (v160_Certified/winx64 v160_EBU_Certified/%ebucertbuilddate% v160_Development/Framework_Dev_Certified_Pkgs/winx64) DO (
+FOR %%P in (v160_Certified/winx64 v160_Development/Framework_Dev_Certified_Pkgs/winx64 v160_EBU_Certified/%ebucertbuilddate% ) DO (
   echo Start downloading package %%P
-  call %wgetdir%\wget.exe -m -np -nH --cut-dirs=2 --http-user=%username% --http-password=%userpasswd% %artifactorysite%/%%P/ 2>> %wgetlog%
+  call %wgetdir%\wget.exe -m -np -nH --cut-dirs=%cutdirs% --http-user=%username% --http-password=%userpasswd% %artifactorysite%/%%P/ 2>> %wgetlog%
   if errorlevel 1 echo Error occurred during download. Continuing with other packages
   echo Done downloading package %%P
 )

@@ -12,9 +12,11 @@ set username=nappann
 
 REM HQ Artifactory
 REM set artifactorysite=http://canartifactory:8080/artifactory/simple
+REM set cutdirs=2
 REM set userpasswd=\{DESede\}8jwH8iChqx+Kud7qnvie1A==
 REM SJ Artifactory
 set artifactorysite=http://sjoartsrv01:8080/artifactory
+set cutdirs=1
 set userpasswd=\{DESede\}zXjI4YKQ5kyHnup5RJ5TIg==
 
 set artifact_download_dir=E:\dtemp\installs_extract\ANSYSDownloads
