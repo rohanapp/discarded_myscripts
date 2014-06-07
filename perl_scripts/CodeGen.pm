@@ -5,8 +5,8 @@ use warnings;
 use GlobUtils;
 
 # REVISIT: below database file names are hard-coded
-my $gTypeTranslationFile = "E:/programs/perl_scripts/typetranslationhelper.txt";
-my $gUtilityTranslationFile = "E:/programs/perl_scripts/utilitytranslationhelper.txt";
+my $gTypeTranslationFile = "E:/programs/myscripts/perl_scripts/typetranslationhelper.txt";
+my $gUtilityTranslationFile = "E:/programs/myscripts/perl_scripts/utilitytranslationhelper.txt";
 
 # "typetranslation.txt" and "utilitytranslation.txt" databases are used to map abbreviated types and abbreviated utilities
 # Abbreviated-type-name is mapped to: list of include references, list of fully qualified type names

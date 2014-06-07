@@ -82,6 +82,17 @@ help: none {
 // logfileio
 // touchfile
 // readlibrary
+// wbbindir
+// path_cs
+// strings_cs
+// xmlread
+// createobjoftype
+// executionscope
+// behavioroftypes
+// behaviorsforprops
+// interop
+// child_of_solution
+// create_phys_option
 }
 
 inclhelp: none {
@@ -1260,4 +1271,185 @@ for (int ii = 0; ii < numTries; ++ii)
   //}
     ANSOFT_SLEEP(checkFileInterval);
 //}
+}
+
+//
+// Category: C-sharp .Net and WB/ASim related
+// 
+wbbindir: none {
+  using Ans.Common.Utilities;
+  // Bin directory corresponding to ASim addin
+  string addinDirectory = PathHelper.GetAddinsBinDirectory(Constants.ASimInternalName);
+}
+
+path_cs: none {
+  using System.IO;
+  // Literally combine
+  string combinedPath = Path.Combine(dirPath, fileName);
+  // Check if path is absolute path or relative path
+  bool isAbsPath = Path.IsPathRooted(combinedPath);
+  // Full path. "/a/../b" input returns /b
+  string fullPath = Path.GetFullPath(combinedPath);
+  
+  bool exists = File.Exists(fullPath);
+}
+
+env_cs: none {
+  using System;
+  string pathWithEnvVars;
+  Environment.ExpandEnvironmentVariables(pathWithEnvVars);
+}
+
+strings_cs: none {
+  using System;
+  string someStr;
+  bool flag = String.IsNullOrEmpty(someStr);
+}
+
+xmlread: none {
+ using System.Xml.XPath;
+ var doc = new XPathDocument(xmlFilePath);
+ XPathNavigator nav = doc.CreateNavigator();
+ // Select all nodes/elements matching given xpath expression.
+ // Iterator in this state does not point to any node. MoveNext must
+ // be invoked before referencing first node
+ XPathNodeIterator iter = nav.Select("Solver");
+ // Iterate through the selected nodes
+ while (iter.MoveNext())
+   // Each node is itself a navigator
+   XPathNavigator currNode = iter.Current;
+   // Access attributes of the current node
+   // Second argument is namespaceURI
+   string attribValue = currNode.GetAttribute("AttribLocalName", string.Empty);
+
+  // Select child nodes/elements with the name SupportedPropertyFiles
+  currNode.Select("./SupportedPropertyFiles");
+}
+
+createobjoftype: none {
+  using System;
+  // objType must be the concrete type from which an instance needs to be created
+  Type objType = ...;
+  // Create instance via the default constructor
+  var typeObj = Activator.CreateInstance(objType) as objType;
+}
+
+executionscope: none {
+  var executionScope = userObject.GetExecutionScope();
+  // GetObjects returns a HashSet of UserObjects
+  var physicsOptions = executionScope.GetObjects<MechanicalPhysicsOptions>();
+  if (!physicsOptions.Any())
+    sth;
+  string solverName = executionScope.GetSolverName();
+  // Has all below methods
+  // CalculationType GetCalculationType();
+  // Mesh GetInputMesh();
+  // Model GetInputModel();
+  // HashSet<T> GetObjects<T>(GetObjectsFlags flags) where T : UserObject;
+  // PhysicsType GetPhysicsTypes();
+  // SolverSettings GetSolverSettings();
+}
+
+behavioroftypes: none {
+  // These behaviors are run at the end of every command
+  stateProvider.GetTypeMetadata<T>().Creatable = TypeCreatable; // Args: UserObject
+  stateProvider.GetTypeMetadata<T>().Duplicatable = PhysicsOptionsDuplicateable; // Args: UserObject
+  stateProvider.GetTypeMetadata<T>().ValidParentTypes.Add(typeof(SealedType).Name);
+}
+
+validityrules: none {
+  // Validity rules determine whether a UserObject is valid.
+  stateProvider.ValidityRules.Add(Predicate, ValidateMethod);
+  // Predicate args: UserObject that is being validated
+  // ValidateMethod args: UserObject being validated, IValidityRuleStateInformation (to invoke AddStateMessage)
+  // !!!Note!! The default StateMessageLevel is Error. So invoking AddStateMessage likely implies
+  // that UserObject is invalid
+
+  // Example
+  // stateProvider.ValidityRules.Add(IsMaterialAssignments, MaterialAssignmentValidity);
+}
+
+behaviorsforprops: none {
+  // The input to GetPropertyMetaData is a function that takes in a UserObject and returns one of it's property.
+  // In the below case, meta-data is returned for AxisSection.RelativeTo property.
+  using Ansys.Study.Core.Common.State;
+  PropertyMetadata pMetaData = stateProvider.GetPropertyMetadata((AxisSection x) => x.RelativeTo);
+  // Set the types that can be assigned to this property
+  pMetaData.ScopableTypes = (item) => new List<Type> { typeof(ReferenceFrame) };
+  // REVISIT: what is OptionsRule? Is this the set of values allowed for a property??
+  pMetaData.OptionsRule = GlobalPropertyRules.GetAllOptions;
+  pMetaData.TopologyApplicability = (item, property) => new List<ReferenceTopologyType>() { ReferenceTopologyType.RTT_Body };
+  pMetaData.ScopableTypes = (item) => new List<Type>() { typeof(PhysicsRegion), typeof(SelectionSet), typeof(Locator) };
+  // REVISIT: what is ReadOnlyRule? Does this specify behavior of property when AIM runs in read-only mode?
+  pMetaData.ReadOnlyRule = ConnectionCreationModeReadOnlyRule;
+}
+
+interop: none {
+  // This is sample code that shows how to invoke C++ methods as C# methods.
+  // On C++ side: create class/methods as usual. ADDITIONALLY: create "C" calling convention
+  // global functions that basically invoke corresponding methods, using the passed in
+  // 'this' pointer
+
+  //
+  // C++ side
+  //
+
+  // Class + methods
+  class BasicLicensing
+    BasicLicensing();
+    void Method1();
+
+  // Global functions defined in "C" calling convention
+  extern "C" __declspec(dllexport) BasicLicensing* CreateActivator()
+    return new BasicLicensing(); // BasicLicensing is a C++ class
+  extern "C" __declspec(dllexport) void DisposeActivator(BasicLicensing* pBasicLicensing)
+    delete pBasicLicensing;
+    pBasicLicensing = NULL;
+  extern "C" __declspec(dllexport) void InvokeMethod1(BasicLicensing* pBasicLicensing)
+    pBasicLicensing->Method1();
+
+  //
+  // C# side: 
+  // 1. Create corresponding C# class, which derives from IDisposable
+  // 2. Map C++ global functions to class-static C# methods
+  // 3. Create C# field/methods. Forward implementation to the above class-static c# methods
+
+  // 1. Make sure that the encapsulating C# class derives from IDisposable
+  using System;
+  class Activator : IDisposable
+
+    // 2. class-static c# methods
+    // Say, the above C++ code is built into samplecpp.dll
+    [DllImport("samplecpp.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern IntPtr CreateActivator();
+    [DllImport("samplecpp.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern void DisposeActivator(IntPtr activator);
+    [DllImport("samplecpp.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern void InvokeMethod1(IntPtr activator);
+
+    // 3. Field/methods
+    // Field pointing to C++ object
+    private IntPtr _activator;
+    // Constructor
+    public Activator()
+      _activator = CreateActivator();
+    // IDisposable implementation
+    public void Dispose()
+      DisposeActivator(_activator);
+      _activator = IntPtr.Zero;
+
+}
+
+child_of_solution: none {
+  IExecutionScope executionScope = solverSettings.GetExecutionScope();
+  Solution solution = executionScope.GetSolution();
+  // Get all children that are physics regions
+  IEnumerable<PhysicsRegion> physicsRegions = solution.GetChildObjects<PhysicsRegion>(GetObjectsFlags.NoRecursion | GetObjectsFlags.UnsuppressedObjects | GetObjectsFlags.SuppressedObjects);
+}
+
+create_phys_option: none {
+  // Excerpt from mapdl
+  using Ansys.Study.Core;
+  if (!physicsRegion.GetChildObjects<MechanicalPhysicsOptions>().Any())
+    var mechanicalPhysicsOptions = CreationFactory.CreateEntity<MechanicalPhysicsOptions>(physicsRegion);
 }

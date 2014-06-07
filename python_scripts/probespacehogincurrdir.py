@@ -1,19 +1,6 @@
-import sys, subprocess, os, re
+import os, re
 
-def RunPerlScript(scriptName):
-  """ This function runs the given perl script and will return
-      only after the invoked perl script exits. Returns
-      a list: exit code from the invoked process, the captured stdout and stderr
-  """
-  perlscriptdir = "e:/programs/myscripts/perl_scripts"
-  perlscript = perlscriptdir + "/" + scriptName
-  proccmdline = ["perl", "-I" + perlscriptdir, perlscript];
-  proc1 = subprocess.Popen(proccmdline, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-  proc1ret = proc1.communicate()
-  # Insert returncode at the beginning of the list
-  retvalList = list(proc1ret)
-  retvalList[0:0] = [proc1.returncode]
-  return retvalList
+import myutils
 
 def ParseDirDiskUsage(dirLine):
   # Each output line is of the form:
@@ -37,7 +24,7 @@ def ParseDirDiskUsage(dirLine):
       retVal = (dirname, sizeInMB, None)
   return retVal
 
-def DiskSpaceLeadersInCurrDir(subdirDiskUse, maxDiskUsageVal):
+def PrintDiskSpaceUsageInCurrDir(subdirDiskUse, maxDiskUsageVal):
   """
      Return: dict(spaceUsed:dirname), error message string
   """
@@ -46,7 +33,7 @@ def DiskSpaceLeadersInCurrDir(subdirDiskUse, maxDiskUsageVal):
   diskSpaceIgnoreLimit = diskSpaceIgnoreLimitFraction*maxDiskUsageVal
 
   perlscript = "dirsizesincurrdir.pl"
-  [exitCode, procout, procerr] = RunPerlScript(perlscript)
+  [exitCode, procout, procerr] = myutils.RunPerlScript(perlscript)
   if (exitCode):
     procerr += "\nError: some failures in computing space taken by: "
     procerr += os.path.realpath(os.getcwd())
@@ -75,7 +62,7 @@ def DiskSpaceLeadersInCurrDir(subdirDiskUse, maxDiskUsageVal):
     try:
       os.chdir(dirName)
       tempSubdirDiskUse = {}
-      localErrors = DiskSpaceLeadersInCurrDir(tempSubdirDiskUse, maxDiskUsageVal)
+      localErrors = PrintDiskSpaceUsageInCurrDir(tempSubdirDiskUse, maxDiskUsageVal)
       subdirDiskUse.update(tempSubdirDiskUse)
       if (localErrors and len(localErrors)):
         procerr += "\n"
@@ -87,25 +74,20 @@ def DiskSpaceLeadersInCurrDir(subdirDiskUse, maxDiskUsageVal):
     
   return procerr
 
-# Main function
-if __name__ == '__main__':
-  try:  
-    subdirDiskUse = {}
-    errstrs = DiskSpaceLeadersInCurrDir(subdirDiskUse, 0)
+# Function invoked from main.py
+def MainFunction(argc, argv):
+  subdirDiskUse = {}
+  errstrs = PrintDiskSpaceUsageInCurrDir(subdirDiskUse, 0)
 
-    duSubdirsMap = {}
-    for dirName, duVal in subdirDiskUse.iteritems():
-      duSubdirsMap[duVal] = dirName
+  duSubdirsMap = {}
+  for dirName, duVal in subdirDiskUse.iteritems():
+    duSubdirsMap[duVal] = dirName
 
-    print "\n\n\n"
-    for duVal, dirName in duSubdirsMap.iteritems():
-      print duVal, "(MB)", "-"*10 + ">", dirName
-    print "\n\n\n"
-
-  except Exception as e:
-    print "Error: exception caught!"
-    print "\nException type is", type(e), ".\n\nDescription:\n", e
-    raise
+  print "\n\n\n"
+  for duVal in sorted(duSubdirsMap.keys()):
+    dirName = duSubdirsMap[duVal]
+    print duVal, "(MB)", "-"*10 + ">", dirName
+  print "\n\n\n"
 
   if(len(errstrs)):
     print "Errors occurred!\n", errstrs
