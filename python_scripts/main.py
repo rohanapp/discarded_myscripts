@@ -1,7 +1,7 @@
 import sys
 
 import site
-site.addsitedir('E:/programs/myscripts/python_scripts/site-packages')
+site.addsitedir('C:/programs/myscripts/python_scripts/site-packages')
 
 import myutils
 

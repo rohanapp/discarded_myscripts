@@ -24,4 +24,6 @@ set wgetdir=E:\programs\bin
 REM April 3 2014 is 20140403 (yyyymmdd)
 set ebucertbuilddate=20140403
 
+set install_path=C:\Program Files\ANSYS Inc
+
 goto :eof

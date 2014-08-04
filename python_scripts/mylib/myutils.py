@@ -3,9 +3,11 @@ import sys, subprocess, os, re
 gConfigVars = {}
 
 def InitializeConfig(argc, argv):
-  configFilePath = "E:/programs/myscripts/config.cmd"
+  configFilePath = "C:/programs/myscripts/config.cmd"
   if not os.path.exists(configFilePath):
+    print >>sys.stderr, "\n\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
     print >>sys.stderr, configFilePath, "does not exist!\n"
+    print >>sys.stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n"
     return
 
   configFile = open(configFilePath, "r")
