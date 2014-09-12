@@ -1453,3 +1453,41 @@ create_phys_option: none {
   if (!physicsRegion.GetChildObjects<MechanicalPhysicsOptions>().Any())
     var mechanicalPhysicsOptions = CreationFactory.CreateEntity<MechanicalPhysicsOptions>(physicsRegion);
 }
+
+// C# assert
+assert_cs: none {
+using System.Diagnostics;
+Trace.Assert(val == 0);
+}
+
+// Iterate through locationset references
+iter_locationset: none {
+using System.Diagnostics; // Assert
+using Ansys.Common.Interop.AnsCoreObjects; // IAnsTransform
+using Ansys.Common.Interop.AnsysBRep; // IABrBREP, IABrTopoCell
+using Ansys.Common.Interop.DSPartMgr; // IPmPartMgr, IPmPart
+using Ansys.Study.Core; // RecursionLevel enum
+using Ansys.Study.Core.Common.Geometry; // Model
+using Ansys.Study.Core.Common.Referencing; // LocationSet
+
+var model = executionScope.GetInputModel();
+foreach (IReference reference in locationSet.GetReferences(model, RecursionLevel.Full)) {
+  var geomRef = reference as IGeometryReference;
+  Trace.Assert(geomRef != null);
+
+  var partId = (int)geomRef.PartId;
+  var referenceId = (int)geomRef.Id;
+  IPmPartMgr mgr = asimCfgMgr.ConfigMgr.PartMgr;
+  IPmPart part = mgr.get_PartById((uint)partId);
+  Trace.Assert(part != null);
+
+  IAnsTransform pAnsTransform = part.Transform;
+  Trace.Assert(pAnsTransform != null);
+
+  uint uiTopo = part.GetTopoId((uint)referenceId);
+  var bRep = part.BRep as IABrBRep;
+  Trace.Assert(bRep != null);
+
+  IABrTopoCell cell = bRep.get_Cell(uiTopo);
+  Trace.Assert(cell != null);}
+}
