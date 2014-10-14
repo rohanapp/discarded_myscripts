@@ -1,12 +1,12 @@
 @echo off
 
-cd nextgen\ansoftcore
+cd build\OfficialSln
 if errorlevel 1 goto error
 
 call buildsln_debug64.bat Core
 
+
 cd ..\..
-if errorlevel 1 goto error
 
 goto finish
 

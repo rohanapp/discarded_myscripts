@@ -63,16 +63,22 @@ if %2 == core call buildcore_release.bat
 if %2 == maxcirc call buildmaxcirc_release.bat %3
 if %2 == simplorer call buildsimplorer_release.bat %3
 
+cd ..\..
+
 goto finish
 
 :error
 echo Error occured during cd to view
 set ERRORLEVEL=1
+cd ..\..
+
 goto finish
 
 :error_proj
 echo Project name is incorrect
 set ERRORLEVEL=2
+cd ..\..
+
 goto finish
 
 :finish

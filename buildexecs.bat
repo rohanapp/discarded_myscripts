@@ -33,11 +33,15 @@ call buildview %gitproj% hfss
 call buildview %gitproj% designer
 call buildview %gitproj% maxwell
 
+cd ..\..
+
 goto finish
 
 :error
 echo Error occured during cd to view
 set ERRORLEVEL=1
+cd ..\..
+
 goto finish
 
 :finish

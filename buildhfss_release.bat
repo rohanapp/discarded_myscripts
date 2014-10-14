@@ -3,19 +3,17 @@
 set buildcore=1
 if "%1"=="nocore" set buildcore=0
 
-cd nextgen
+cd build\OfficialSln
 if errorlevel 1 goto error
 if %buildcore%==1 (
-  cd ansoftcore
-  if errorlevel 1 goto error
   call buildsln_release64.bat Core All_Core
-  cd ..
-  if errorlevel 1 goto error
 )
 
-call buildsln_release64.bat hfss all_hfss
+call buildsln_release64.bat MCAD
+call buildsln_release64.bat 3D-UI
 
-cd ..
+cd ..\..
+
 goto finish
 
 :error

@@ -1,5 +1,0 @@
-set ANSOFT_DEBUG_MODE=1
-set ANSOFT_DEBUG_LOG_SEPARATE=1
-set ANSOFT_DEBUG_LOG=\\narmada\temp\debuglogs\ansdebug
-set ECA_ANSOFT_SCRIPT_DEBUG=1
-

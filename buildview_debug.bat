@@ -30,7 +30,6 @@ echo Trying git views on %repodrive2% drive
 %repodrive2%:
 echo cd %repodir2%\%1
 cd %repodir2%\%1
-if errorlevel 1 goto error
 goto founddir
 
 :founddir
@@ -63,16 +62,22 @@ if %2 == core call buildcore_debug.bat
 if %2 == maxcirc call buildmaxcirc_debug.bat %3
 if %2 == simplorer call buildsimplorer_debug.bat %3
 
+cd ..\..
+
 goto finish
 
 :error
 echo Error occured during cd to view
 set ERRORLEVEL=1
+cd ..\..
+
 goto finish
 
 :error_proj
 echo Project name is incorrect
 set ERRORLEVEL=2
+cd ..\..
+
 goto finish
 
 :finish

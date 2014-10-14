@@ -1,27 +1,22 @@
 @echo off
 
 set cwd=%CD%
-echo cd nextgen\ansoftcore
-cd nextgen\ansoftcore
+echo cd build\OfficialSln
+cd build\OfficialSln
 if errorlevel 1 goto error
 call buildsln_debug64.bat Core All_Core
 
-echo cd ..
-cd ..
-if errorlevel 1 goto error
 
-call buildsln_debug64.bat hfss all_hfss
+call buildsln_debug64.bat MCAD
+call buildsln_debug64.bat 3D-UI
 
-echo cd ansoftcore
-cd ansoftcore
-if errorlevel 1 goto error
 call buildsln_release64.bat Core All_Core
 
-echo cd ..
-cd ..
-if errorlevel 1 goto error
 
-call buildsln_release64.bat hfss all_hfss
+call buildsln_debug64.bat MCAD
+call buildsln_release64.bat 3D-UI
+
+cd ..\..
 
 goto finish
 

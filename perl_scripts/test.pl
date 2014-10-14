@@ -68,63 +68,6 @@ sub ParseFilePathComponents
     return fileparse($_[0], qr/\.[^.]*/);
 }
 
-my $errMatch = qr/if errorlevel 1 goto error/;
-my $match1 = qr/cd nextgen\\ansoftcore/;
-my $match2 = qr/cd nextgen/;
-my $match3 = qr/cd ansoftcore/; 
-my $match4 = qr/cd \.\./; 
-my $match5 = qr/Nextgen_NoHfss/; # Designer-UI
-my $match6 = qr/hfss all_hfss|maxwelllight all_maxwell/; # 3D-UI
-my $match7 = qr/goto finish/;
-
-my $disableErrCheck = 0;
-
-sub ProcessFile
-{
-  my $fileHandle;
-  my $currFilePath = $_[0];
-  open($fileHandle, "< $currFilePath") or die "Unable to open '$_[0]' for reading";
-  my @newLines;
-  my @fileLines = <$fileHandle>;
-  foreach(@fileLines) {
-      my $skipLine = 0;
-      if (/$match1/) {
-	  s/$match1/cd build\\OfficialSln/g;
-      } elsif (/$match2/) {
-	  s/$match2/cd build\\OfficialSln/g;
-      } elsif (/$match3/) {
-	  $skipLine = 1;
-	  $disableErrCheck = 1;
-      } elsif (/$match4/) {
-	  $skipLine = 1;
-	  $disableErrCheck = 1;
-      } elsif ($disableErrCheck && /$errMatch/) {
-	  $skipLine = 1;
-	  $disableErrCheck = 0;
-      } elsif (/$match5/) {
-	  s/($match5)/Designer-UI/g;
-      } elsif (/$match6/) {
-	  s/($match6)/3D-UI/g;
-	  push(@newLines, "call buildsln_debug64.bat MCAD\n");
-      } elsif (/$match7/) {
-	  push(@newLines, "cd ..\\..\n\n");
-      }
-
-      next if ($skipLine);
-
-      chomp($_);
-      push(@newLines, "$_\n");
-  }
-
-  my $outputFileHandle;
-  open($outputFileHandle, ">$currFilePath") or die "Unable to open file '$currFilePath' for writing";
-  foreach(@newLines) {
-      print $outputFileHandle $_;
-  }
-
-}
-
-
 # TEMPLATE FUNCTION
 # Purpose: 
 #     - For each file in *current* directory, do action
@@ -134,13 +77,12 @@ sub ProcessFile
 sub DoEditOrReadOfFile
 {
     my $currFile = $_[0];
-    
-    my $matchBuildScript = qr/build.+\.bat/;
-    my $matchAIMBuildScript = qr/buildaim.+\.bat/;
-    return if ($currFile =~ m/$matchAIMBuildScript/);
-    return if !($currFile =~ m/$matchBuildScript/);
+    my ($fname, $fdir, $fextn) = ParseFilePathComponents($currFile);
+    print "Targeting '$currFile', Extn = '$fextn' ...\n" if ($gModVerbose || $gPreviewOnly);
+    return if ($gPreviewOnly);
 
-    ProcessFile($currFile);
+    # Read or edit. E.g. $size += -s _; #(stat($filePath))[7]
+    return if ($fextn != "bat");
 }
 
 sub DoActionForFilesInCurrDir
@@ -154,6 +96,10 @@ sub DoActionForFilesInCurrDir
 	next if ($_ eq "." || $_ eq "..");
 	my $dirPath = "./$_";
 	if (-d $dirPath) {
+	    my $currDir = getcwd;
+	    chdir($dirPath) or die "Unable to change working directory to '$dirPath'";
+	    DoActionForFilesInCurrDir(); 
+	    chdir($currDir) or die "Unable to switch back the working directory to '$currDir'";
 	} else {
             # CUSTOMIZE
 	    DoEditOrReadOfFile($dirPath);

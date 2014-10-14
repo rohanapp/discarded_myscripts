@@ -7,6 +7,8 @@ call make_simp_engine.bat DEBUG NOCLEAN NOUPDATE
 
 call make_simp_engine.bat RELEASE NOCLEAN NOUPDATE
 
+cd ..\..
+
 goto finish
 
 :error

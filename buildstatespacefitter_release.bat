@@ -9,6 +9,8 @@ if errorlevel 1 goto error
 echo call buildsln_release64.bat standalone_fitter
 call buildsln_release64.bat standalone_fitter
 
+cd ..\..
+
 goto finish
 
 :error
